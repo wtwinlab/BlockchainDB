@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	Models "github.com/sbip-sg/BlockchainDB/storage/models"
-	Modules "github.com/sbip-sg/BlockchainDB/storage/modules"
+	Models "github.com/sbip-sg/BlockchainDB/storage/ethereum/models"
+	Modules "github.com/sbip-sg/BlockchainDB/storage/ethereum/modules"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/gorilla/mux"

@@ -7,7 +7,7 @@ import (
 	"log"
 	"math/big"
 
-	Models "github.com/sbip-sg/BlockchainDB/storage/models"
+	Models "github.com/sbip-sg/BlockchainDB/storage/ethereum/models"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -146,7 +146,7 @@ func TransferEth(client ethclient.Client, privKey string, to string, amount int6
 	return signedTx.Hash().String(), nil
 }
 
-// GetAddressBalance returns the given address balance =P
+// GetAddressBalance returns the given address balance
 func GetAddressBalance(client ethclient.Client, address string) (string, error) {
 	account := common.HexToAddress(address)
 	balance, err := client.BalanceAt(context.Background(), account, nil)
