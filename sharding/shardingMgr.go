@@ -1,50 +1,53 @@
 package sharding
 
 import (
+	"context"
+	"fmt"
 	"strings"
 
-	BlockchainConnector "github.com/sbip-sg/BlockchainDB/connectors"
+	EthConnector "github.com/sbip-sg/BlockchainDB/blockchainconnectors/ethereumconnector"
+	FabConnector "github.com/sbip-sg/BlockchainDB/blockchainconnectors/fabricconnector"
 )
 
 type ShardingMgr struct {
-	ethConn *BlockchainConnector.EthereumConnector
-	fabConn *BlockchainConnector.FabricConnector
+	EthConn *EthConnector.EthereumConnector
+	FabConn *FabConnector.FabricConnector
 }
 
 func shard(key string) string {
-	if strings.HasPrefix(key, "eth") {
-		return "ethereum"
-	} else if strings.HasPrefix(key, "fab") {
-		return "fabric"
+	if strings.HasPrefix(key, PARTITION_ETH().Key) {
+		return PARTITION_ETH().Shard
+	} else if strings.HasPrefix(key, PARTITION_FAB().Shard) {
+		return PARTITION_FAB().Shard
 	} else {
-		return "default"
+		return PARTITION_DEFAULT().Shard
 	}
 }
 
-func (mgr *ShardingMgr) Read(key string) {
+func (mgr *ShardingMgr) Read(ctx context.Context, key string) (string, error) {
 
 	switch shard(key) {
-	case "ethereum":
-		mgr.ethConn.Read(key)
-		return
-	case "fabric":
-		mgr.fabConn.Read(key)
-		return
+	case PARTITION_ETH().Shard:
+		return mgr.EthConn.Read(key)
+
+	case PARTITION_FAB().Shard:
+		return mgr.FabConn.Read(key)
+
 	default:
-		return
+		return "", fmt.Errorf("Error sharding key %s", key)
 	}
 
 }
 
-func (mgr *ShardingMgr) Write(key string, value string) {
+func (mgr *ShardingMgr) Write(ctx context.Context, key string, value string) error {
 	switch shard(key) {
-	case "ethereum":
-		mgr.ethConn.Write(key, value)
-		return
-	case "fabric":
-		mgr.fabConn.Write(key, value)
-		return
+	case PARTITION_ETH().Shard:
+		return mgr.EthConn.Write(key, value)
+
+	case PARTITION_FAB().Shard:
+		return mgr.FabConn.Write(key, value)
+
 	default:
-		return
+		return fmt.Errorf("Error sharding key %s", key)
 	}
 }

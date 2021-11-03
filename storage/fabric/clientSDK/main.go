@@ -4,7 +4,7 @@ Copyright 2020 IBM All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 
-package main
+package clientSDK
 
 import (
 	"fmt"
@@ -15,60 +15,39 @@ import (
 
 	"github.com/hyperledger/fabric-sdk-go/pkg/core/config"
 	"github.com/hyperledger/fabric-sdk-go/pkg/gateway"
-	BlockchainConnector "github.com/sbip-sg/BlockchainDB/connectors"
+	BlockchainConnector "github.com/sbip-sg/BlockchainDB/blockchainconnectors/fabricconnector"
 )
 
-func main() {
-	var fabconn *BlockchainConnector.FabricConnector
-	fabconn, err := NewFabricKVStoreInstance()
-	if err != nil {
-		fmt.Println(err)
-	}
-	key := "tianwen"
-	value := "world"
-	res, err := fabconn.Write(key, value)
-	if err != nil {
-		fmt.Printf("Failed to Write: %v", err)
-	}
-	fmt.Println(res)
-	val, err := fabconn.Read(key)
-	if err != nil {
-		fmt.Printf("Failed to Read: %v", err)
-	}
-	fmt.Println(val)
-}
 func NewFabricKVStoreInstance() (*BlockchainConnector.FabricConnector, error) {
-	//var fabricConn *BlockchainConnector.FabricConnector
 
-	channel1 := "kvchannel"
-
-	chaincode1 := "kvstore"
+	channel := "kvchannel"
+	chaincode := "kvstore"
 
 	fmt.Println("Warning: Using default channel(kvchannel) and smartcontract(kvstore) ")
 
 	err := os.Setenv("DISCOVERY_AS_LOCALHOST", "true")
 	if err != nil {
-		log.Fatalf("Error setting DISCOVERY_AS_LOCALHOST environemnt variable: %v", err)
+		log.Printf("Error setting DISCOVERY_AS_LOCALHOST environemnt variable: %v", err)
+		return nil, err
 	}
 
 	wallet, err := gateway.NewFileSystemWallet("wallet")
 	if err != nil {
-		log.Fatalf("Failed to create wallet: %v", err)
+		log.Printf("Failed to create wallet: %v", err)
+		return nil, err
 	}
 
 	if !wallet.Exists("appUser") {
 		err = populateWallet(wallet)
 		if err != nil {
-			log.Fatalf("Failed to populate wallet contents: %v", err)
+			log.Printf("Failed to populate wallet contents: %v", err)
+			return nil, err
 		}
 	}
 
 	ccpPath := filepath.Join(
 		"..",
-		"networks",
-		"organizations",
-		"peerOrganizations",
-		"org1.example.com",
+		"networks", "config",
 		"connection-org1.yaml",
 	)
 
@@ -82,15 +61,20 @@ func NewFabricKVStoreInstance() (*BlockchainConnector.FabricConnector, error) {
 		return nil, err
 	}
 
-	network1, err := gw.GetNetwork(channel1)
+	network1, err := gw.GetNetwork(channel)
 	if err != nil {
 		fmt.Printf("Failed to get network: %v", err)
 		return nil, err
 	}
-	kvcontract := network1.GetContract(chaincode1)
-	result, err := kvcontract.SubmitTransaction("Set", "A13", "1300")
+	kvcontract := network1.GetContract(chaincode)
+
+	result, err := kvcontract.SubmitTransaction("Set", "fab-test", "Hello World")
 	if err != nil {
-		log.Fatalf("Failed to Submit transaction: %v", err)
+		log.Printf("Failed to Submit transaction: Set %v", err)
+	}
+	result, err = kvcontract.EvaluateTransaction("Get", "fab-test")
+	if err != nil {
+		log.Printf("Failed to Submit transaction: Get %v", err)
 	}
 	log.Println(string(result))
 
@@ -102,11 +86,7 @@ func populateWallet(wallet *gateway.Wallet) error {
 	credPath := filepath.Join(
 		"..",
 		"networks",
-		"organizations",
-		"peerOrganizations",
-		"org1.example.com",
-		"users",
-		"User1@org1.example.com",
+		"config",
 		"msp",
 	)
 
