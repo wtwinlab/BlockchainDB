@@ -19,21 +19,24 @@ import (
 
 func NewEthereumKVStoreInstance(ethnode string, hexaddress string, hexkey string) (*BlockchainConnector.EthereumConnector, error) {
 
+	var conn *BlockchainConnector.EthereumConnector
 	client, err := ethclient.Dial(ethnode)
 
 	if err != nil {
 		fmt.Println("error ethclient Dail "+ethnode, err)
-		return nil, err
+		return conn, err
 	}
 
 	address := common.HexToAddress(hexaddress)
 	instance, err := KVStore.NewStore(address, client)
 	if err != nil {
 		log.Fatal("error create a new instance of Store, bound to a specific deployed contract.", err)
-		return nil, err
+		return conn, err
 	}
-
-	return &BlockchainConnector.EthereumConnector{Client: client, KV: instance, Hexkey: hexkey}, nil
+	conn.Client = client
+	conn.KV = instance
+	conn = &BlockchainConnector.EthereumConnector{Client: client, KV: instance, Hexkey: hexkey}
+	return conn, nil
 }
 
 func DeployEthereumKVStoreContract(ethnode string, hexkey string) (string, string, *KVStore.Store, error) {

@@ -8,9 +8,25 @@ import (
 type Options struct {
 	SelfID         string `mapstructure:"self-id"`
 	ServerNodeAddr string `mapstructure:"server-node-addr"`
+	Type           string `mapstructure:"shard-type"`
 	EthNode        string `mapstructure:"eth-node"`
 	EthHexAddr     string `mapstructure:"eth-hexaddr"`
-	EthHexKey      string
+	EthHexKey      string `mapstructure:"eth-hexkey"`
+	FabNode        string `mapstructure:"fab-node"`
+	FabConfig      string `mapstructure:"fab-config"`
+	ShardNumber    int    `mapstructure:"shard-number"`
+	Shards         []Shard
+}
+
+type Shard struct {
+	ID           string `mapstructure:"shard-id"`
+	Type         string `mapstructure:"shard-type"`
+	PartitionKey string `mapstructure:"shard-patition-key"`
+	EthNode      string `mapstructure:"eth-node"`
+	EthHexAddr   string `mapstructure:"eth-hexaddr"`
+	EthHexKey    string `mapstructure:"eth-hexkey"`
+	FabNode      string `mapstructure:"fab-node"`
+	FabConfig    string `mapstructure:"fab-config"`
 }
 
 func ReadConfig(opts interface{}, configfile string) (err error) {

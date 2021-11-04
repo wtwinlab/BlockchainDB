@@ -1,6 +1,6 @@
 package connectors
 
 type BlockchainConnector interface {
-	Get(string) (string, error)
-	Put(key, value string) error
+	Read(string) (string, error)
+	Write(string, string) error
 }
