@@ -16,10 +16,10 @@ import (
 
 func main() {
 
-	configFile := flag.String("config", "", "The path to the config file")
+	configFile := flag.String("config", "config.toml", "The path to the config file")
 	flag.Parse()
 	var conf config.Options
-	err := config.ReadConfig(&conf, *configFile) //default config file "blockchaindb.toml"
+	err := config.ReadConfig(&conf, *configFile) //default config file "config.toml"
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to read config: %v\n", err)
 		os.Exit(1)

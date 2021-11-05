@@ -2,7 +2,10 @@ package sharding
 
 import (
 	"context"
+	"hash/fnv"
 	"log"
+	"math"
+	"strconv"
 	"strings"
 
 	Connectors "github.com/sbip-sg/BlockchainDB/blockchainconnectors"
@@ -14,8 +17,9 @@ import (
 )
 
 type ShardingMgr struct {
-	Shards map[string]Connectors.BlockchainConnector
-	conf   map[string]config.Shard
+	Shards      map[string]Connectors.BlockchainConnector
+	Conf        map[string]config.Shard
+	ShardNumber int
 	// BCConn Connectors.BlockchainConnector
 	// EthConn *EthConnector.EthereumConnector
 	// FabConn *FabConnector.FabricConnector
@@ -54,13 +58,18 @@ func NewShardingMgr(conf *config.Options) (*ShardingMgr, error) {
 	// 	log.Println("Failed to NewEthereumKVStoreInstance", err)
 	// 	return nil, err
 	// }
-	return &ShardingMgr{Shards: shards}, nil
+	return &ShardingMgr{Shards: shards, Conf: confs, ShardNumber: conf.ShardNumber}, nil
 }
 
-// func partitionScheme(key string) string {
-// 	partitionId := hash(key)
-// 	return partitionId
-// }
+func (mgr *ShardingMgr) partitionScheme(key string) string {
+	partitionId := math.Mod(hash(key), mgr.ShardNumber)
+	return strconv.Itoa(partitionId)
+}
+func hash(s string) uint32 {
+	h := fnv.New32a()
+	h.Write([]byte(s))
+	return h.Sum32()
+}
 
 func partition(key string) string {
 	if strings.HasPrefix(key, PARTITION_ETH().Key) {
@@ -84,7 +93,8 @@ func (mgr *ShardingMgr) Read(ctx context.Context, key string) (string, error) {
 	// default:
 	// 	return "", fmt.Errorf("Error sharding key %s", key)
 	// }
-	return mgr.Shards[partition(key)].Read(key)
+	partitionkey := mgr.partitionScheme(key)
+	return mgr.Shards[partitionkey].Read(key)
 
 }
 
@@ -99,5 +109,6 @@ func (mgr *ShardingMgr) Write(ctx context.Context, key string, value string) err
 	// default:
 	// 	return fmt.Errorf("Error sharding key %s", key)
 	// }
-	return mgr.Shards[partition(key)].Write(key, value)
+	partitionkey := mgr.partitionScheme(key)
+	return mgr.Shards[partitionkey].Write(key, value)
 }
