@@ -3,7 +3,6 @@ package connectors
 import (
 	"context"
 	"crypto/ecdsa"
-	"fmt"
 	"log"
 	"math/big"
 
@@ -24,24 +23,24 @@ func (ethereumConn *EthereumConnector) Read(key string) (string, error) {
 	auth, err := ethereumConn.bindTransactOpts()
 	result, err := ethereumConn.KV.Get(auth, []byte(key))
 	if err != nil {
-		log.Println("error Read", err)
+		log.Println("error EthereumConnector Read ", err)
 		return "", err
 	}
 	//fmt.Println(string(result.Data()))
 	return string(result.Data()), nil
 }
 
-func (ethereumConn *EthereumConnector) Write(key, value string) error {
+func (ethereumConn *EthereumConnector) Write(key, value string) (string, error) {
 
 	auth, err := ethereumConn.bindTransactOpts()
 	tx, err := ethereumConn.KV.Set(auth, []byte(key), []byte(value))
 	if err != nil {
-		log.Println(err)
-		return err
+		log.Println("error EthereumConnector Write ", err)
+		return "", err
 	}
 
-	fmt.Printf("tx sent: %s", tx.Hash().Hex()) // tx sent
-	return nil
+	//fmt.Printf("tx sent: %s", tx.Hash().Hex()) // tx sent
+	return tx.Hash().Hex(), nil
 }
 
 func (ethereumConn *EthereumConnector) bindTransactOpts() (*bind.TransactOpts, error) {

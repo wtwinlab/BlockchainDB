@@ -2,13 +2,13 @@ package sharding
 
 import (
 	"context"
-	"hash/fnv"
+	"hash/adler32"
 	"log"
-	"math"
 	"strconv"
 	"strings"
 
 	Connectors "github.com/sbip-sg/BlockchainDB/blockchainconnectors"
+
 	//EthConnector "github.com/sbip-sg/BlockchainDB/blockchainconnectors/ethereumconnector"
 	//FabConnector "github.com/sbip-sg/BlockchainDB/blockchainconnectors/fabricconnector"
 	"github.com/sbip-sg/BlockchainDB/node/config"
@@ -62,13 +62,21 @@ func NewShardingMgr(conf *config.Options) (*ShardingMgr, error) {
 }
 
 func (mgr *ShardingMgr) partitionScheme(key string) string {
-	partitionId := math.Mod(hash(key), mgr.ShardNumber)
+
+	partitionId := hash(key) % mgr.ShardNumber
+
 	return strconv.Itoa(partitionId)
 }
-func hash(s string) uint32 {
-	h := fnv.New32a()
-	h.Write([]byte(s))
-	return h.Sum32()
+
+func hash(data string) int {
+	// 1. adler32
+	sum := int(adler32.Checksum([]byte(data)))
+
+	// 2. fnv
+	// algorithm := fnv.New32a()
+	// algorithm.Write([]byte(data))
+	// sum := int(algorithm.Sum32())
+	return sum
 }
 
 func partition(key string) string {
@@ -98,7 +106,7 @@ func (mgr *ShardingMgr) Read(ctx context.Context, key string) (string, error) {
 
 }
 
-func (mgr *ShardingMgr) Write(ctx context.Context, key string, value string) error {
+func (mgr *ShardingMgr) Write(ctx context.Context, key string, value string) (string, error) {
 	// switch partition(key) {
 	// case PARTITION_ETH().Shard:
 	// 	return mgr.EthConn.Write(key, value)

@@ -22,5 +22,5 @@ message SetRequest {
 }
 
 message SetResponse {
-    // Empty.
+    string tx = 1;
 }

@@ -33,8 +33,7 @@ func NewEthereumKVStoreInstance(ethnode string, hexaddress string, hexkey string
 		log.Fatal("error create a new instance of Store, bound to a specific deployed contract.", err)
 		return conn, err
 	}
-	conn.Client = client
-	conn.KV = instance
+
 	conn = &BlockchainConnector.EthereumConnector{Client: client, KV: instance, Hexkey: hexkey}
 	return conn, nil
 }

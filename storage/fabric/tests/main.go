@@ -1,9 +1,3 @@
-/*
-Copyright 2020 IBM All Rights Reserved.
-
-SPDX-License-Identifier: Apache-2.0
-*/
-
 package main
 
 import (
@@ -18,12 +12,15 @@ func main() {
 	if err != nil {
 		fmt.Println("Failed to NewFabricKVStoreInstance", err)
 	}
+
 	key := "tianwen"
 	value := "hello world"
-	err = fabconn.Write(key, value)
+
+	tx, err := fabconn.Write(key, value)
 	if err != nil {
 		fmt.Printf("Failed to Write: %v", err)
 	}
+	fmt.Println(tx)
 
 	val, err := fabconn.Read(key)
 	if err != nil {

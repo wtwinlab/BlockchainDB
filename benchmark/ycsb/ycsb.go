@@ -13,7 +13,7 @@ import (
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 
 	"github.com/sbip-sg/BlockchainDB/benchmark"
-	// pbv "github.com/EinWTW/BlockchainDB/proto/veritas"
+	pbv "github.com/sbip-sg/BlockchainDB/proto/blockchaindb"
 )
 
 var (
@@ -28,7 +28,7 @@ func main() {
 	kingpin.Parse()
 
 	addrs := strings.Split(*serverAddrs, ",")
-	clis := make([]pbv.VeritasNodeClient, 0)
+	clis := make([]pbv.BCdbNodeClient, 0)
 	conns := make([]*grpc.ClientConn, 0)
 	defer func() {
 		for _, conn := range conns {
@@ -41,7 +41,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		cli := pbv.NewVeritasNodeClient(conn)
+		cli := pbv.NewBCdbNodeClient(conn)
 
 		conns = append(conns, conn)
 		clis = append(clis, cli)

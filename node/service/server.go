@@ -46,9 +46,9 @@ func (sv *ServerNode) Get(ctx context.Context, req *pbv.GetRequest) (*pbv.GetRes
 
 func (sv *ServerNode) Set(ctx context.Context, req *pbv.SetRequest) (*pbv.SetResponse, error) {
 	// Use serverclient instance to set
-	err := sv.shardingMgr.Write(ctx, req.GetKey(), req.GetValue())
+	tx, err := sv.shardingMgr.Write(ctx, req.GetKey(), req.GetValue())
 	if err != nil {
 		return nil, err
 	}
-	return &pbv.SetResponse{}, nil
+	return &pbv.SetResponse{Tx: tx}, nil
 }
