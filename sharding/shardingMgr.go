@@ -11,7 +11,7 @@ import (
 
 	//EthConnector "github.com/sbip-sg/BlockchainDB/blockchainconnectors/ethereumconnector"
 	//FabConnector "github.com/sbip-sg/BlockchainDB/blockchainconnectors/fabricconnector"
-	"github.com/sbip-sg/BlockchainDB/node/config"
+	"github.com/sbip-sg/BlockchainDB/bcdbnode/config"
 	EthClientSDK "github.com/sbip-sg/BlockchainDB/storage/ethereum/clientSDK"
 	FabClientSDK "github.com/sbip-sg/BlockchainDB/storage/fabric/clientSDK"
 )

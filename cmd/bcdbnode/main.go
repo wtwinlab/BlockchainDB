@@ -8,8 +8,8 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/sbip-sg/BlockchainDB/node/config"
-	"github.com/sbip-sg/BlockchainDB/node/service"
+	service "github.com/sbip-sg/BlockchainDB/bcdbnode"
+	"github.com/sbip-sg/BlockchainDB/bcdbnode/config"
 	pbv "github.com/sbip-sg/BlockchainDB/proto/blockchaindb"
 	"google.golang.org/grpc"
 )

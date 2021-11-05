@@ -4,15 +4,12 @@
 replicaIDs=${1:-4}
 shardIDs=${2:-1}
 echo "Usage: ./scripts/gen_config.sh 4 1"
-echo "Generate config files, cluster size: ${shardIDs}"
+echo "Generate config files, replicas: ${replicaIDs}, shards: ${shardIDs}"
 dir=$(pwd)
 echo $dir
-tomlDir="$dir/toml.${shardIDs}"
+tomlDir="$dir/toml.${shardIDs}.${replicaIDs}"
 
 mkdir -p ${tomlDir}
-
-
-
 
 for (( c=1; c<=${replicaIDs}; c++ ))
 do
@@ -20,7 +17,7 @@ tomlFile="${tomlDir}/config${c}.toml"
 rm -f ${tomlFile}
 touch ${tomlFile}
 echo "self-id = ${c}" > ${tomlFile}
-echo 'server-node-addr = 1' >> ${tomlFile}
+echo "server-node-addr = \"127.0.0.1:$((50000 + ${c}))\"" >> ${tomlFile}
 echo "shard-type = \"eth\"" >> ${tomlFile}
 echo "eth-node = \"http://localhost:$((8000 + ${c}))\"" >> ${tomlFile}
 echo "eth-hexaddr = \"b16882db1820b19ea52e7167e68b4ee03b6abb39\"" >> ${tomlFile}

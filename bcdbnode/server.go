@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/sbip-sg/BlockchainDB/node/config"
+	"github.com/sbip-sg/BlockchainDB/bcdbnode/config"
 	pbv "github.com/sbip-sg/BlockchainDB/proto/blockchaindb"
 	"github.com/sbip-sg/BlockchainDB/sharding"
 )
