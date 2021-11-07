@@ -10,7 +10,7 @@ defaultAddrs="127.0.0.1:50001"
 loadPath="$dir/temp/ycsb_data/workloada.dat"
 runPath="$dir/temp/ycsb_data/run_workloada.dat"
 
-size=${1:-4}
+size=${1:-1}
 ndrivers=${2:-4}
 nthreads=10
 

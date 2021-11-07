@@ -13,7 +13,7 @@ import (
 	//FabConnector "github.com/sbip-sg/BlockchainDB/blockchainconnectors/fabricconnector"
 	"github.com/sbip-sg/BlockchainDB/bcdbnode/config"
 	EthClientSDK "github.com/sbip-sg/BlockchainDB/storage/ethereum/clientSDK"
-	FabClientSDK "github.com/sbip-sg/BlockchainDB/storage/fabric/clientSDK"
+	//FabClientSDK "github.com/sbip-sg/BlockchainDB/storage/fabric/clientSDK"
 )
 
 type ShardingMgr struct {
@@ -26,8 +26,8 @@ type ShardingMgr struct {
 }
 
 func NewShardingMgr(conf *config.Options) (*ShardingMgr, error) {
-	var shards map[string]Connectors.BlockchainConnector
-	var confs map[string]config.Shard
+	shards := make(map[string]Connectors.BlockchainConnector)
+	confs := make(map[string]config.Shard)
 	for _, shard := range conf.Shards {
 		switch shard.Type {
 		case PARTITION_ETH().Shard:
@@ -40,13 +40,13 @@ func NewShardingMgr(conf *config.Options) (*ShardingMgr, error) {
 			confs[shard.ID] = shard
 			log.Println("Sucess NewEthereumKVStoreInstance for shard ", shard.ID)
 		case PARTITION_FAB().Shard:
-			fabconn, err := FabClientSDK.NewFabricKVStoreInstance()
-			if err != nil {
-				log.Println("Failed to NewFabricKVStoreInstance", err)
-				break
-			}
-			shards[shard.ID] = fabconn
-			confs[shard.ID] = shard
+			// fabconn, err := FabClientSDK.NewFabricKVStoreInstance()
+			// if err != nil {
+			// 	log.Println("Failed to NewFabricKVStoreInstance", err)
+			// 	break
+			// }
+			// shards[shard.ID] = fabconn
+			// confs[shard.ID] = shard
 			log.Println("Sucess NewFabricKVStoreInstance for shard ", shard.ID)
 		default:
 			log.Println("Error sharding key", shard.ID)

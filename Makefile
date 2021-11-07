@@ -1,6 +1,6 @@
-binaries := cmd/bcdbnode/bcdbnode benchmark/ycsb/ycsbtest storage/ethereum/contracts/contract_deploy
-nodes := 4
-clients := 4
+binaries := cmd/bcdbnode/bcdbnode benchmark/ycsb/ycsbtest
+nodes := 1
+clients := 1
 
 .PHONY: all build clean download $(binaries) init generate install test
 
@@ -25,7 +25,7 @@ generate:
 	
 install:
 	@/bin/bash scripts/stop_nodes.sh
-	@/bin/bash scripts/start_veritas_nodes.sh $(nodes) > veritas.log 2>&1 && cat veritas.log
+	@/bin/bash scripts/start_nodes.sh $(nodes) > server.log 2>&1 && cat server.log
 
 test:
 	@echo "Test start with node size: $(nodes), client size: $(clients)"

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #set -x
 
-replicaIDs=${1:-4}
+replicaIDs=${1:-1}
 shardIDs=${2:-1}
 echo "Usage: ./scripts/gen_config.sh 4 1"
 echo "Generate config files, replicas: ${replicaIDs}, shards: ${shardIDs}"
@@ -18,7 +18,7 @@ rm -f ${tomlFile}
 touch ${tomlFile}
 echo "self-id = ${c}" > ${tomlFile}
 echo "server-node-addr = \"127.0.0.1:$((50000 + ${c}))\"" >> ${tomlFile}
-echo "shard-type = \"eth\"" >> ${tomlFile}
+echo "shard-type = \"ethereum\"" >> ${tomlFile}
 echo "eth-node = \"http://localhost:$((8000 + ${c}))\"" >> ${tomlFile}
 echo "eth-hexaddr = \"b16882db1820b19ea52e7167e68b4ee03b6abb39\"" >> ${tomlFile}
 echo "eth-hexkey = \"2243d6f09ad779cc50ccecc3a6779b62ba6c0bb1390e6b0dfcd8fca5eea98193\"" >> ${tomlFile}
@@ -32,7 +32,7 @@ echo '# This is the information that each replica is given about the other shard
 	echo '[[shards]]' >> ${tomlFile}
 	echo "shard-id = ${j}" >> ${tomlFile}
 	echo "shard-partition-key = \"eth${j}-\"" >> ${tomlFile}
-	echo "shard-type = \"eth\"" >> ${tomlFile}
+	echo "shard-type = \"ethereum\"" >> ${tomlFile}
 	echo "eth-node = \"http://localhost:$((8000 + ${j}))\"" >> ${tomlFile}
 	echo "eth-hexaddr = \"b16882db1820b19ea52e7167e68b4ee03b6abb39\"" >> ${tomlFile}
 	echo "eth-hexkey = \"2243d6f09ad779cc50ccecc3a6779b62ba6c0bb1390e6b0dfcd8fca5eea98193\"" >> ${tomlFile}

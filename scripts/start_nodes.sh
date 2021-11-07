@@ -6,16 +6,18 @@
 # pkill -f "bcdbnode"
 # sleep 5
 
-dir=$(pwd)
-bin="$dir/cmd/bcdbnode"
+dir=$(dirname "$0")
 
 echo "Start blockchaindb server nodes, Please input server node size(default 4)"
-replicaIDs=${1:-4}
+replicaIDs=${1:-1}
 shardIDs=${2:-1}
+
+bin="$dir/../cmd/bcdbnode/bcdbnode"
+tomlDir="$dir/../toml.${shardIDs}.${replicaIDs}"
 
 for (( c=1; c<=$replicaIDs; c++ ))
 do 
-$bin --config="toml.${replicaIDs}/config"${c} &
+$bin --config="${tomlDir}/config${c}" &
 echo "bcdbnode$c start with config file toml.${replicaIDs}.${shardIDs}/config$c.toml"
 done
 

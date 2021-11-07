@@ -10,8 +10,8 @@ import (
 func main() {
 
 	ethnode := "http://localhost:8000"
-	hexaddress := "b16882db1820b19ea52e7167e68b4ee03b6abb39"
-	hexkey := "2243d6f09ad779cc50ccecc3a6779b62ba6c0bb1390e6b0dfcd8fca5eea98193"
+	hexaddress := "c6021b15bffcb65c90fc8c52d4ec34e5caa2ae27"
+	hexkey := "c60ccf8851c2dc099aace5af7922df16a9cab438d9879dd7c55d0df4f3eb199a"
 
 	ethereumconn, err := ClientSDK.NewEthereumKVStoreInstance(ethnode, hexaddress, hexkey)
 	if err != nil {
