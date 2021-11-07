@@ -2,7 +2,6 @@ package connectors
 
 import (
 	"context"
-	"crypto/ecdsa"
 	"log"
 	"math/big"
 
@@ -22,18 +21,20 @@ type EthereumConnector struct {
 func (ethereumConn *EthereumConnector) Read(key string) (string, error) {
 	auth, err := ethereumConn.bindTransactOpts()
 	result, err := ethereumConn.KV.Get(auth, []byte(key))
+	//result, err := ethereumConn.KV.Get(nil, []byte(key))
 	if err != nil {
 		log.Println("error EthereumConnector Read ", err)
 		return "", err
 	}
-	//fmt.Println(string(result.Data()))
 	return string(result.Data()), nil
+	//return result, nil
 }
 
 func (ethereumConn *EthereumConnector) Write(key, value string) (string, error) {
 
 	auth, err := ethereumConn.bindTransactOpts()
 	tx, err := ethereumConn.KV.Set(auth, []byte(key), []byte(value))
+	//tx, err := ethereumConn.KV.Set(auth, key, value)
 	if err != nil {
 		log.Println("error EthereumConnector Write ", err)
 		return "", err
@@ -55,21 +56,21 @@ func (ethereumConn *EthereumConnector) bindTransactOpts() (*bind.TransactOpts, e
 		return nil, err
 	}
 
-	publicKey := privateKey.Public()
-	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
-	if !ok {
-		log.Println("error casting public key to ECDSA")
-		return nil, err
-	}
+	// publicKey := privateKey.Public()
+	// publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
+	// if !ok {
+	// 	log.Println("error casting public key to ECDSA")
+	// 	return nil, err
+	// }
 
-	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
-	nonce, err := ethereumConn.Client.PendingNonceAt(context.Background(), fromAddress)
-	if err != nil {
-		log.Println("error return the account nonce of the given account in the pending state.", err)
-		return nil, err
-	}
+	// fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
+	// nonce, err := ethereumConn.Client.PendingNonceAt(context.Background(), fromAddress)
+	// if err != nil {
+	// 	log.Println("error return the account nonce of the given account in the pending state.", err)
+	// 	return nil, err
+	// }
 	auth := bind.NewKeyedTransactor(privateKey)
-	auth.Nonce = big.NewInt(int64(nonce))
+	//auth.Nonce = big.NewInt(int64(nonce))
 	auth.Value = big.NewInt(0)     // in wei
 	auth.GasLimit = uint64(300000) // in units
 	auth.GasPrice = gasPrice

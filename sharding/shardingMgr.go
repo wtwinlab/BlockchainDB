@@ -63,7 +63,7 @@ func NewShardingMgr(conf *config.Options) (*ShardingMgr, error) {
 
 func (mgr *ShardingMgr) partitionScheme(key string) string {
 
-	partitionId := hash(key) % mgr.ShardNumber
+	partitionId := hash(key)%mgr.ShardNumber + 1
 
 	return strconv.Itoa(partitionId)
 }

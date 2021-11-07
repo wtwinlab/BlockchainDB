@@ -40,11 +40,11 @@ func main() {
 		//panic(err)
 		fmt.Printf("%v", err)
 	} else {
-		log.Println("Veritas Node listen address: " + conf.ServerNodeAddr)
+		log.Println("Node listen address: " + conf.ServerNodeAddr)
 	}
 
 	go func() {
-		log.Printf("Veritas Node Serving gRPC: %s", conf.ServerNodeAddr)
+		log.Printf("Node Serving gRPC: %s", conf.ServerNodeAddr)
 		s.Serve(lis)
 	}()
 

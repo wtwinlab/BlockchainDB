@@ -19,23 +19,24 @@ touch ${tomlFile}
 echo "self-id = ${c}" > ${tomlFile}
 echo "server-node-addr = \"127.0.0.1:$((50000 + ${c}))\"" >> ${tomlFile}
 echo "shard-type = \"ethereum\"" >> ${tomlFile}
+echo "shard-number = \"${shardIDs}\"" >> ${tomlFile}
 echo "eth-node = \"http://localhost:$((8000 + ${c}))\"" >> ${tomlFile}
-echo "eth-hexaddr = \"b16882db1820b19ea52e7167e68b4ee03b6abb39\"" >> ${tomlFile}
-echo "eth-hexkey = \"2243d6f09ad779cc50ccecc3a6779b62ba6c0bb1390e6b0dfcd8fca5eea98193\"" >> ${tomlFile}
+echo "eth-hexaddr = \"c6021b15bffcb65c90fc8c52d4ec34e5caa2ae27\"" >> ${tomlFile}
+echo "eth-hexkey = \"c60ccf8851c2dc099aace5af7922df16a9cab438d9879dd7c55d0df4f3eb199a\"" >> ${tomlFile}
 echo "fab-node = \"127.0.0.1:$((40070 + ${c}))\"" >> ${tomlFile}
 echo "fab-config = \"connection${c}.yaml\"" >> ${tomlFile}
 echo '' >> ${tomlFile}
 
 echo '# This is the information that each replica is given about the other shards' >> ${tomlFile}
-	for (( j=1; j<=$shardIDs; j++ ))
+	for (( j=1; j<=${shardIDs}; j++ ))
 	do
 	echo '[[shards]]' >> ${tomlFile}
 	echo "shard-id = ${j}" >> ${tomlFile}
 	echo "shard-partition-key = \"eth${j}-\"" >> ${tomlFile}
 	echo "shard-type = \"ethereum\"" >> ${tomlFile}
 	echo "eth-node = \"http://localhost:$((8000 + ${j}))\"" >> ${tomlFile}
-	echo "eth-hexaddr = \"b16882db1820b19ea52e7167e68b4ee03b6abb39\"" >> ${tomlFile}
-	echo "eth-hexkey = \"2243d6f09ad779cc50ccecc3a6779b62ba6c0bb1390e6b0dfcd8fca5eea98193\"" >> ${tomlFile}
+	echo "eth-hexaddr = \"c6021b15bffcb65c90fc8c52d4ec34e5caa2ae27\"" >> ${tomlFile}
+	echo "eth-hexkey = \"c60ccf8851c2dc099aace5af7922df16a9cab438d9879dd7c55d0df4f3eb199a\"" >> ${tomlFile}
 	echo "fab-node = \"127.0.0.1:$((40070 + ${j}))\"" >> ${tomlFile}
 	echo "fab-config = \"connection${j}.yaml\"" >> ${tomlFile}
 	echo '' >> ${tomlFile}

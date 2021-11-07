@@ -2,7 +2,6 @@ package clientSDK
 
 import (
 	"context"
-	"crypto/ecdsa"
 	"fmt"
 	"log"
 	"math/big"
@@ -26,7 +25,7 @@ func NewEthereumKVStoreInstance(ethnode string, hexaddress string, hexkey string
 		fmt.Println("error ethclient Dail "+ethnode, err)
 		return conn, err
 	}
-
+	log.Println("Sucess dial EthereumConnector for ethnode ", ethnode)
 	address := common.HexToAddress(hexaddress)
 	instance, err := KVStore.NewStore(address, client)
 	if err != nil {
@@ -51,19 +50,19 @@ func DeployEthereumKVStoreContract(ethnode string, hexkey string) (string, strin
 		return "", "", nil, err
 	}
 
-	publicKey := privateKey.Public()
-	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
-	if !ok {
-		log.Println("error casting public key to ECDSA")
-		return "", "", nil, err
-	}
+	// publicKey := privateKey.Public()
+	// publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
+	// if !ok {
+	// 	log.Println("error casting public key to ECDSA")
+	// 	return "", "", nil, err
+	// }
 
-	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
-	nonce, err := client.PendingNonceAt(context.Background(), fromAddress)
-	if err != nil {
-		log.Println(err)
-		return "", "", nil, err
-	}
+	// fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
+	// nonce, err := client.PendingNonceAt(context.Background(), fromAddress)
+	// if err != nil {
+	// 	log.Println(err)
+	// 	return "", "", nil, err
+	// }
 
 	gasPrice, err := client.SuggestGasPrice(context.Background())
 	if err != nil {
@@ -72,7 +71,7 @@ func DeployEthereumKVStoreContract(ethnode string, hexkey string) (string, strin
 	}
 
 	auth := bind.NewKeyedTransactor(privateKey)
-	auth.Nonce = big.NewInt(int64(nonce))
+	//auth.Nonce = big.NewInt(int64(nonce))
 	auth.Value = big.NewInt(0)     // in wei
 	auth.GasLimit = uint64(300000) // in units
 	auth.GasPrice = gasPrice       //big.NewInt(0)

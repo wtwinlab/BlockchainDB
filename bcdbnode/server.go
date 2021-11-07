@@ -41,7 +41,7 @@ func (sv *ServerNode) Get(ctx context.Context, req *pbv.GetRequest) (*pbv.GetRes
 	if err != nil {
 		return nil, err
 	}
-	return &pbv.GetResponse{Value: string(val)}, nil
+	return &pbv.GetResponse{Value: []byte(val)}, nil
 }
 
 func (sv *ServerNode) Set(ctx context.Context, req *pbv.SetRequest) (*pbv.SetResponse, error) {

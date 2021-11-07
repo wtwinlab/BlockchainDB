@@ -9,8 +9,8 @@ import (
 )
 
 func main() {
-	addr := "127.0.0.1:40071"
-	key := "user1"
+	addr := "127.0.0.1:50001"
+	key := "tianwen1108"
 	value := "66666666666666666666666666"
 
 	conn, err := grpc.Dial(addr, grpc.WithInsecure())
@@ -24,12 +24,12 @@ func main() {
 		fmt.Println(err)
 	}
 	fmt.Println("BlockchainDB Set done.")
-	fmt.Println(res.String())
+	fmt.Println(res.Tx)
 
 	res1, err := cli.Get(context.Background(), &pbv.GetRequest{Key: key})
 	if err != nil {
 		fmt.Println(err)
 	}
 	fmt.Println("Blockchain Get done.")
-	fmt.Println(res1.Value)
+	fmt.Println(string(res1.Value))
 }
