@@ -17,12 +17,16 @@ import (
 
 func main() {
 
-	ethnode := "http://localhost:8000"
+	//ethnode := "http://localhost:8000"
+	ethnode := "/home/tianwen/Data/eth_1_1/geth.ipc"
 	//hexaddress := "0x062CeC99B1A3e4a5653125cF5ab390C8CE02df7A" //
 	//hexaddress := "0x8Cf891EE6F2b232516b6162B1b04D5858B4926a5"
-	hexaddress := "0x6005FC466f3e8BC198d192DdDB099fe2998Ba5d1"
+	//hexaddress := "01594dbb20c483de0b0a3ed38389fd8a45c70d84"
+	hexaddress := "0x8697d21734E20dA53f5fB198F2B6aB1bDa1f2a11"
+	hexkey := "cab9d9e123e4ebe529ad3054e61308fe6411d3eae05b0a16522f0bd92de3c644"
+	// default account
 	//hexaddress := "0xc6021b15bffcb65c90fc8c52d4ec34e5caa2ae27"
-	hexkey := "c60ccf8851c2dc099aace5af7922df16a9cab438d9879dd7c55d0df4f3eb199a"
+	//hexkey := "c60ccf8851c2dc099aace5af7922df16a9cab438d9879dd7c55d0df4f3eb199a"
 
 	ethereumconn, err := ClientSDK.NewEthereumKVStoreInstance(ethnode, hexaddress, hexkey)
 	if err != nil {
@@ -30,13 +34,13 @@ func main() {
 	}
 
 	//key := []byte("tianwen")
-	key := "tianwen-1"
+	key := "tianwen-2"
 	value := "hello world"
 	result1, err := ethereumconn.Write(key, value)
 	if err != nil {
 		log.Fatal("error ethereumconn.Write ", err)
 	}
-	fmt.Println(result1)
+	fmt.Println("write tx: ", result1)
 	result, err := ethereumconn.Read(key)
 	if err != nil {
 		log.Fatal("error ethereumconn.Read ", err)
@@ -50,6 +54,14 @@ func main() {
 		fmt.Println("error ethclient Dail "+ethnode, err)
 	}
 	address := common.HexToAddress(hexaddress)
+	bytecode, err := client.CodeAt(context.Background(), address, nil) // nil is latest block
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	isContract := len(bytecode) > 0
+	fmt.Printf("is contract: %v\n", isContract) // is contract: true
+
 	contract, err := KVStore.NewStore(address, client)
 	if err != nil {
 		log.Fatalf("Unable to bind to deployed instance of contract:%v\n", err)
