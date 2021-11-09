@@ -12,7 +12,7 @@ runPath="$dir/temp/ycsb_data/run_workloada.dat"
 
 size=${1:-1}
 ndrivers=${2:-4}
-nthreads=10
+nthreads=${3:-10}
 
 
 for (( c=2; c<=${size}; c++ ))

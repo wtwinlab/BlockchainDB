@@ -6,7 +6,7 @@ import (
 
 	"github.com/sbip-sg/BlockchainDB/bcdbnode/config"
 	pbv "github.com/sbip-sg/BlockchainDB/proto/blockchaindb"
-	"github.com/sbip-sg/BlockchainDB/sharding"
+	sharding "github.com/sbip-sg/BlockchainDB/shardingmanager"
 )
 
 var _ pbv.BCdbNodeServer = (*ServerNode)(nil)
