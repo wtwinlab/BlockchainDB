@@ -29,22 +29,19 @@ func main() {
 
 	svr, err := service.NewServerNode(&conf)
 	if err != nil {
-		//panic(err)
-		fmt.Printf("%v", err)
-
+		log.Fatalf("New ServerNode err %v", err)
 	}
+
 	pbv.RegisterBCdbNodeServer(s, svr)
 	lis, err := net.Listen("tcp", conf.ServerNodeAddr)
-
 	if err != nil {
-		//panic(err)
-		fmt.Printf("%v", err)
+		log.Fatalf("Node listen err %v", err)
 	} else {
 		log.Println("Node listen address: " + conf.ServerNodeAddr)
 	}
 
 	go func() {
-		log.Printf("Node Serving gRPC: %s", conf.ServerNodeAddr)
+		log.Println("Node Serving gRPC: ", conf.ServerNodeAddr)
 		s.Serve(lis)
 	}()
 

@@ -16,7 +16,7 @@ type ServerNode struct {
 }
 
 func NewServerNode(conf *config.Options) (*ServerNode, error) {
-
+	// version 1.0
 	// ethereumconn, err := EthClientSDK.NewEthereumKVStoreInstance(conf.EthNode, conf.EthHexAddr, conf.EthHexKey)
 	// if err != nil {
 	// 	log.Println("Failed to NewEthereumKVStoreInstance", err)
@@ -28,6 +28,8 @@ func NewServerNode(conf *config.Options) (*ServerNode, error) {
 	// 	return nil, err
 	// }
 	// shamgr := &sharding.ShardingMgr{EthConn: ethereumconn, FabConn: fabricconn}
+
+	// version 2.0
 	shamgr, err := sharding.NewShardingMgr(conf)
 	if err != nil {
 		log.Println("Failed to NewShardingMgr", err)

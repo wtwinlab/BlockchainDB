@@ -3,12 +3,14 @@
 ##### Start blockchain network
 
 ```
-//install Geth@v1.8.23
+//Install Geth@v1.8.23
 //reset if exist  ~/Data/eth/
 ./scripts/eth/gen_eth_config.sh 
 ./scripts/eth/init_eth_account.sh
 ./scripts/eth/start_eth_node.sh
 
+//Deploy KVStore contract (storage/ethereum/contracts/KVStore)
+go run storage/ethereum/contracts/deploy/contract_deploy.go
 ```
 
 ##### Start bcdb nodes
