@@ -17,6 +17,7 @@ genesisFile="${genesisDir}/CustomGenesis_${j}.json"
   for (( i=1; i<=${nodeIDs}; i++ ))
   do
   echo "Using custom genesis file: ${genesisFile}, datadir: ${ETH_DATA}_${j}_${i}"
+  rm -rf ${ETH_DATA}_${j}_${i}/*
   geth --datadir=${ETH_DATA}_${j}_${i} init ${genesisFile}
   geth --datadir=${ETH_DATA}_${j}_${i} --password <(echo -n "") account new
   #geth --rpc --rpcport "8085" --datadir Data/TestChain init genesis.json

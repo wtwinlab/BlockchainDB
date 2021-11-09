@@ -22,4 +22,4 @@ done
 echo "start test with bcdbnode addrs: ${defaultAddrs}"
 
 
-$bin --load-path=$loadPath --run-path=$runPath --ndrivers=$ndrivers --nthreads=$nthreads --veritas-addrs=${defaultAddrs} &
+$bin --load-path=$loadPath --run-path=$runPath --ndrivers=$ndrivers --nthreads=$nthreads --server-addrs=${defaultAddrs} &

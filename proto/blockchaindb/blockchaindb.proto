@@ -6,6 +6,7 @@ option go_package = "proto/blockchaindb";
 service BCdbNode {
     rpc Get (GetRequest) returns (GetResponse);
     rpc Set (SetRequest) returns (SetResponse);
+    rpc Verify (VerifyRequest) returns (VerifyResponse);
 }
 
 message GetRequest {
@@ -23,4 +24,13 @@ message SetRequest {
 
 message SetResponse {
     string tx = 1;
+}
+
+message VerifyRequest {
+    string opt = 1;
+    string key = 2;
+}
+
+message VerifyResponse {
+    bool success = 1;
 }

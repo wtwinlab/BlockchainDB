@@ -13,12 +13,12 @@ replicaIDs=${1:-1}
 shardIDs=${2:-1}
 
 bin="$dir/../cmd/bcdbnode/bcdbnode"
-tomlDir="$dir/../toml.${shardIDs}.${replicaIDs}"
+tomlDir="$dir/../config.nodes.${shardIDs}.${replicaIDs}"
 
 for (( c=1; c<=$replicaIDs; c++ ))
 do 
 $bin --config="${tomlDir}/config${c}" &
-echo "bcdbnode$c start with config file toml.${replicaIDs}.${shardIDs}/config$c.toml"
+echo "bcdbnode$c start with config file config.nodes.${replicaIDs}.${shardIDs}/config$c.toml"
 done
 
 echo "#########################################################################"

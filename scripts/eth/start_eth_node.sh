@@ -6,12 +6,13 @@ nodeID=${2:-1}
 
 cd `dirname ${BASH_SOURCE-$0}`
 . env.sh
-#geth --datadir=$ETH_DATA --rpc --rpcaddr 0.0.0.0 --rpcport "8000" --rpccorsdomain "*" --gasprice 0 --networkid 9119 --unlock 0 --password <(echo -n "") js <(echo 'console.log(admin.nodeInfo.enode);') 2>/dev/null |grep enode | perl -pe "s/\[\:\:\]/$ip_addr/g" | perl -pe "s/^/\"/; s/\s*$/\"/;"
-
-#geth --datadir=$ETH_DATA --rpc --rpcaddr 0.0.0.0 --rpcport "8000" --rpccorsdomain "*" --gasprice 0 --networkid 9119 --unlock 0 --password <(echo -n "") js <(echo 'console.log(admin.nodeInfo.enode);') 
 
 #${ETH_BIN}/geth --datadir=${ETH_DATA}_${nodeID} --rpc --rpcport "8000" --syncmode "full" --cache 4096 --gasprice 0 --networkid 10001 --mine --minerthreads 1 --unlock 0 console 2> ${ETH_DATA}_${nodeID}/geth.log
 #--password <(echo -n "") js <(echo 'console.log(admin.nodeInfo.enode);') 
 #--nodiscover 
+#--targetgaslimit '67219750000000'
 
-${ETH_BIN}/geth --datadir=${ETH_DATA}_${shardID}_${nodeID} --rpc --rpcport "$((9000 + ${nodeID} + 1000*${shardID}))" --port "$((30303 + ${nodeID} + 1000*(${shardID}-1)))" --syncmode "full" --cache 4096 --gasprice 0 --networkid $((1000 + ${shardID})) --mine --minerthreads 1 --unlock 0 console 2> ${ETH_DATA}_${shardID}_${nodeID}/geth.log
+# console
+# geth attach ./geth.ipc 
+
+${ETH_BIN}/geth --datadir=${ETH_DATA}_${shardID}_${nodeID}  --rpc --rpcport "$((9000 + ${nodeID} + 1000*${shardID}))" --port "$((30303 + ${nodeID} + 1000*(${shardID}-1)))" --syncmode "full" --cache 4096 --gasprice 0 --networkid $((1000 + ${shardID})) --mine --minerthreads 1 --unlock 0 --password <(echo -n "") 2> ${ETH_DATA}_${shardID}_${nodeID}/geth.log &

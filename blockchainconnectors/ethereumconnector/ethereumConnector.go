@@ -2,13 +2,18 @@ package connectors
 
 import (
 	"context"
+	"crypto/ecdsa"
+	"fmt"
 	"log"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	KVStore "github.com/sbip-sg/BlockchainDB/storage/ethereum/contracts/KVStore"
+	"github.com/sbip-sg/BlockchainDB/storage/redis"
+	TxMgr "github.com/sbip-sg/BlockchainDB/transactionMgr"
 )
 
 type EthereumConnector struct {
@@ -16,12 +21,14 @@ type EthereumConnector struct {
 	KV     *KVStore.Store
 	Auth   *bind.TransactOpts
 	Hexkey string
+	Redis  *redis.RedisKV
+	TxMgr  *TxMgr.TransactionMgr
 }
 
 func (ethereumConn *EthereumConnector) Read(key string) (string, error) {
-	auth, err := ethereumConn.bindTransactOpts()
+	auth, err := ethereumConn.bindTransactOpts(key) //no bind
 	result, err := ethereumConn.KV.Get(auth, []byte(key))
-	//result, err := ethereumConn.KV.Get(nil, []byte(key))
+	//result, err := ethereumConn.KV.Get(nil, key)
 	if err != nil {
 		log.Println("error EthereumConnector Read ", err)
 		return "", err
@@ -32,19 +39,76 @@ func (ethereumConn *EthereumConnector) Read(key string) (string, error) {
 
 func (ethereumConn *EthereumConnector) Write(key, value string) (string, error) {
 
-	auth, err := ethereumConn.bindTransactOpts()
+	auth, err := ethereumConn.bindTransactOpts(key)
 	tx, err := ethereumConn.KV.Set(auth, []byte(key), []byte(value))
 	//tx, err := ethereumConn.KV.Set(auth, key, value)
 	if err != nil {
 		log.Println("error EthereumConnector Write ", err)
 		return "", err
 	}
+	txid := tx.Hash().Hex()
+	// Enable verify function
+	if ethereumConn.Redis != nil {
+		err = ethereumConn.Redis.Set([]byte("set_"+key), []byte(txid))
+		if err != nil {
+			log.Println("error store txid for Set opt verification", err)
+		}
+		err = ethereumConn.Redis.Set([]byte("get_"+key), []byte(value))
+		if err != nil {
+			log.Println("error store value for Get opt verification", err)
+		}
+	}
 
-	//fmt.Printf("tx sent: %s", tx.Hash().Hex()) // tx sent
-	return tx.Hash().Hex(), nil
+	return txid, nil
 }
 
-func (ethereumConn *EthereumConnector) bindTransactOpts() (*bind.TransactOpts, error) {
+func (ethereumConn *EthereumConnector) Verify(opt, key string) (bool, error) {
+
+	switch opt {
+	case "set": //check transaction status by txid
+		txid, err := ethereumConn.Redis.Get([]byte("set_" + key))
+		if err != nil {
+			return false, fmt.Errorf("txid for set_key not found")
+		}
+		txhash := common.HexToHash(string(txid))
+		receipt, err := ethereumConn.Client.TransactionReceipt(context.Background(), txhash)
+		if err != nil {
+			return false, err
+		}
+		log.Println("verify tx", string(txid))
+		log.Println("verify receipt status ", receipt.Status)
+		_, isPending, err := ethereumConn.Client.TransactionByHash(context.Background(), txhash)
+		log.Println("verify tx: isPending ", isPending)
+		if receipt.Status == 1 {
+			return true, nil
+		} else {
+			return false, nil
+		}
+	case "get": //compare value
+		getvalue, err := ethereumConn.Redis.Get([]byte("get_" + key))
+		if err != nil {
+			return false, fmt.Errorf("value for get_key not found")
+		}
+		auth, err := ethereumConn.bindTransactOpts(key) //no bind
+		result, err := ethereumConn.KV.Get(auth, []byte(key))
+		if err != nil {
+			log.Println("error EthereumConnector Read ", err)
+			return false, err
+		}
+		if string(getvalue) == string(result.Data()) {
+			return true, nil
+		} else {
+			return false, nil
+		}
+
+	default:
+		return false, fmt.Errorf("Verify operation only support get/set.")
+
+	}
+
+}
+
+func (ethereumConn *EthereumConnector) bindTransactOpts(key string) (*bind.TransactOpts, error) {
 	gasPrice, err := ethereumConn.Client.SuggestGasPrice(context.Background())
 	if err != nil {
 		log.Println("error parse a secp256k1 private key.", err)
@@ -55,81 +119,33 @@ func (ethereumConn *EthereumConnector) bindTransactOpts() (*bind.TransactOpts, e
 		log.Println("error casting public key to ECDSA.", err)
 		return nil, err
 	}
-
-	// publicKey := privateKey.Public()
-	// publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
-	// if !ok {
-	// 	log.Println("error casting public key to ECDSA")
-	// 	return nil, err
-	// }
-
-	// fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
-	// nonce, err := ethereumConn.Client.PendingNonceAt(context.Background(), fromAddress)
-	// if err != nil {
-	// 	log.Println("error return the account nonce of the given account in the pending state.", err)
-	// 	return nil, err
-	// }
 	auth := bind.NewKeyedTransactor(privateKey)
-	//auth.Nonce = big.NewInt(int64(nonce))
-	auth.Value = big.NewInt(0)     // in wei
-	auth.GasLimit = uint64(300000) // in units
+	auth.Value = big.NewInt(0)       // in wei
+	auth.GasLimit = uint64(10000000) // in units
 	auth.GasPrice = gasPrice
+
+	publicKey := privateKey.Public()
+	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
+	if !ok {
+		log.Println("error casting public key to ECDSA")
+		return nil, err
+	}
+	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
+
+	// wait until nounce unique
+	for {
+		nonce, err := ethereumConn.Client.PendingNonceAt(context.Background(), fromAddress)
+		if err != nil {
+			log.Println("error return the account nonce of the given account in the pending state.", err)
+			return nil, err
+		}
+
+		if ethereumConn.TxMgr.WriteNounce(int64(nonce), key) {
+			auth.Nonce = big.NewInt(int64(nonce))
+			log.Println(auth.Nonce)
+			break
+		}
+	}
+
 	return auth, nil
 }
-
-// func (ethereumConn *EthereumConnector) Get(key []byte) (string, error) {
-// 	//value, err := ethereumConn.kv.Get(&bind.TransactOpts{}, key)
-// 	return "", nil
-// }
-
-// func (ethereumConn *EthereumConnector) Set(key, value []byte) error {
-// 	gasPrice, err := ethereumConn.Client.SuggestGasPrice(context.Background())
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	privateKey, err := crypto.HexToECDSA("65f52ec60aadd071de2d5a9241f5d80d6edd159dbd0aebaeec9699e76abe6653")
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-
-// 	publicKey := privateKey.Public()
-// 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
-// 	if !ok {
-// 		log.Fatal("error casting public key to ECDSA")
-// 	}
-
-// 	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
-// 	nonce, err := ethereumConn.Client.PendingNonceAt(context.Background(), fromAddress)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	auth := bind.NewKeyedTransactor(privateKey)
-// 	auth.Nonce = big.NewInt(int64(nonce))
-// 	auth.Value = big.NewInt(0)     // in wei
-// 	auth.GasLimit = uint64(300000) // in units
-// 	auth.GasPrice = gasPrice
-// 	tx, err := ethereumConn.KV.Set(auth, key, value)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-
-// 	fmt.Printf("tx sent: %s", tx.Hash().Hex()) // tx sent
-// 	return nil
-// }
-//
-// func NewKVStoreInstance(addressHex string, ethnode string) (*EthereumConnector, error) {
-// 	var ethereumConn *EthereumConnector
-// 	address := common.HexToAddress(addressHex)
-// 	client, err := ethclient.Dial(ethnode)
-// 	if err != nil {
-// 		fmt.Println(err)
-// 	}
-// 	ethereumConn.Client = client
-// 	store, err := KVStore.NewStore(address, client)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	ethereumConn.KV = store
-// 	return ethereumConn, nil
-
-// }

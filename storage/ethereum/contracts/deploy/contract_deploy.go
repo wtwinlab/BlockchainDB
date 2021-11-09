@@ -15,24 +15,26 @@ func main() {
 
 	//local
 	ethnode := "/home/tianwen/Data/eth_1_1/geth.ipc"
+	hexkey := "35fc8e4f2065b6813078a08069e3a946f203029ce2bc6a62339d30c37f978403"
 
-	//ethnode := "http://localhost:8000"
-	hexkey := "cab9d9e123e4ebe529ad3054e61308fe6411d3eae05b0a16522f0bd92de3c644"
+	// ethnode := "http://localhost:7545"
+	// hexkey := "2b2f78b59cb38b1de758dcdbe71cea29d9d4907e6921a3dd77a8e56fc71de8bf"
 
-	hexaddress, tx, instance, err := ClientSDK.DeployEthereumKVStoreContract(ethnode, hexkey)
+	hexaddress, tx, _, err := ClientSDK.DeployEthereumKVStoreContract(ethnode, hexkey)
 	if err != nil {
 		log.Fatal("DeployEthereumKVStoreContract", err)
 	}
 
 	fmt.Println("address", hexaddress)
 	fmt.Println("tx: ", tx)
-	time.Sleep(30 * time.Second)
+	time.Sleep(10 * time.Second)
 
 	//Debug
 	client, err := ethclient.Dial(ethnode)
 	if err != nil {
 		fmt.Println("error ethclient Dail "+ethnode, err)
 	}
+	//hexaddress := "0xdC5F73E49DdC7ECF506bEAEB4f53670bC6ac53c6"
 	address := common.HexToAddress(hexaddress)
 	bytecode, err := client.CodeAt(context.Background(), address, nil) // nil is latest block
 	if err != nil {
@@ -55,6 +57,6 @@ func main() {
 	// 	log.Fatal("error instance.Get ", err)
 	// }
 	// fmt.Println(string(result.Data()))
-	_ = instance
+	//_ = instance
 
 }

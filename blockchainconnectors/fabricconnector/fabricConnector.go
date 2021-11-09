@@ -28,3 +28,8 @@ func (fabconn *FabricConnector) Write(key string, value string) (string, error) 
 	}
 	return string(tx), err
 }
+
+func (fabconn *FabricConnector) Verify(opt, key string) (bool, error) {
+
+	return true, nil
+}

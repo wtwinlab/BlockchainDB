@@ -21,7 +21,7 @@ var (
 	dataRun           = kingpin.Flag("run-path", "Path of YCSB operation data").Required().String()
 	driverNum         = kingpin.Flag("ndrivers", "Number of drivers for sending requests").Default("4").Int()
 	driverConcurrency = kingpin.Flag("nthreads", "Number of threads for each driver").Default("10").Int()
-	serverAddrs       = kingpin.Flag("veritas-addrs", "Address of veritas nodes").Required().String()
+	serverAddrs       = kingpin.Flag("server-addrs", "Address of veritas nodes").Required().String()
 )
 
 func main() {

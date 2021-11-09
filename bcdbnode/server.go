@@ -6,7 +6,7 @@ import (
 
 	"github.com/sbip-sg/BlockchainDB/bcdbnode/config"
 	pbv "github.com/sbip-sg/BlockchainDB/proto/blockchaindb"
-	sharding "github.com/sbip-sg/BlockchainDB/shardingmanager"
+	sharding "github.com/sbip-sg/BlockchainDB/shardingMgr"
 )
 
 var _ pbv.BCdbNodeServer = (*ServerNode)(nil)
@@ -53,4 +53,12 @@ func (sv *ServerNode) Set(ctx context.Context, req *pbv.SetRequest) (*pbv.SetRes
 		return nil, err
 	}
 	return &pbv.SetResponse{Tx: tx}, nil
+}
+
+func (sv *ServerNode) Verify(ctx context.Context, req *pbv.VerifyRequest) (*pbv.VerifyResponse, error) {
+	result, err := sv.shardingMgr.Verify(ctx, req.GetOpt(), req.GetKey())
+	if err != nil {
+		return nil, err
+	}
+	return &pbv.VerifyResponse{Success: result}, nil
 }

@@ -31,7 +31,7 @@ func NewShardingMgr(conf *config.Options) (*ShardingMgr, error) {
 	for _, shard := range conf.Shards {
 		switch shard.Type {
 		case PARTITION_ETH().Shard:
-			ethconn, err := EthClientSDK.NewEthereumKVStoreInstance(shard.EthNode, shard.EthHexAddr, shard.EthHexKey)
+			ethconn, err := EthClientSDK.NewEthereumKVStoreInstance(shard.EthNode, shard.EthHexAddr, shard.EthHexKey, shard.RedisAddr)
 			if err != nil {
 				log.Println("Failed to NewEthereumKVStoreInstance", err)
 				break
@@ -116,4 +116,19 @@ func (mgr *ShardingMgr) Write(ctx context.Context, key string, value string) (st
 	// }
 	partitionkey := mgr.partitionScheme(key)
 	return mgr.Shards[partitionkey].Write(key, value)
+}
+
+func (mgr *ShardingMgr) Verify(ctx context.Context, opt string, key string) (bool, error) {
+	// switch partition(key) {
+	// case PARTITION_ETH().Shard:
+	// 	return mgr.EthConn.Write(key, value)
+
+	// case PARTITION_FAB().Shard:
+	// 	return mgr.FabConn.Write(key, value)
+
+	// default:
+	// 	return fmt.Errorf("Error sharding key %s", key)
+	// }
+	partitionkey := mgr.partitionScheme(key)
+	return mgr.Shards[partitionkey].Verify(opt, key)
 }

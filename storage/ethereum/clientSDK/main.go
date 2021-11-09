@@ -11,12 +11,13 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 
 	"github.com/ethereum/go-ethereum/ethclient"
-	KVStore "github.com/sbip-sg/BlockchainDB/storage/ethereum/contracts/KVStore"
-
 	BlockchainConnector "github.com/sbip-sg/BlockchainDB/blockchainconnectors/ethereumconnector"
+	KVStore "github.com/sbip-sg/BlockchainDB/storage/ethereum/contracts/KVStore"
+	"github.com/sbip-sg/BlockchainDB/storage/redis"
+	"github.com/sbip-sg/BlockchainDB/transactionMgr"
 )
 
-func NewEthereumKVStoreInstance(ethnode string, hexaddress string, hexkey string) (*BlockchainConnector.EthereumConnector, error) {
+func NewEthereumKVStoreInstance(ethnode string, hexaddress string, hexkey string, redisAddr string) (*BlockchainConnector.EthereumConnector, error) {
 
 	var conn *BlockchainConnector.EthereumConnector
 	client, err := ethclient.Dial(ethnode)
@@ -33,7 +34,12 @@ func NewEthereumKVStoreInstance(ethnode string, hexaddress string, hexkey string
 		return conn, err
 	}
 	log.Println("Sucess load Contract address ", hexaddress)
-	conn = &BlockchainConnector.EthereumConnector{Client: client, KV: instance, Hexkey: hexkey}
+	rdb, err := redis.NewRedisKV(redisAddr, "", 1)
+	if err != nil {
+		return nil, err
+	}
+	txMgr := transactionMgr.NewTransactionMgr()
+	conn = &BlockchainConnector.EthereumConnector{Client: client, KV: instance, Hexkey: hexkey, Redis: rdb, TxMgr: txMgr}
 	return conn, nil
 }
 
@@ -72,9 +78,9 @@ func DeployEthereumKVStoreContract(ethnode string, hexkey string) (string, strin
 
 	auth := bind.NewKeyedTransactor(privateKey)
 	//auth.Nonce = big.NewInt(int64(nonce))
-	auth.Value = big.NewInt(0)     // in wei
-	auth.GasLimit = uint64(300000) // in units
-	auth.GasPrice = gasPrice       //big.NewInt(0)
+	auth.Value = big.NewInt(0)       // in wei
+	auth.GasLimit = uint64(10000000) // in units
+	auth.GasPrice = gasPrice         //big.NewInt(0)
 	fmt.Println("gasPrice ", gasPrice)
 	address, tx, instance, err := KVStore.DeployStore(auth, client)
 	if err != nil {
