@@ -4,12 +4,13 @@
 set -ex
 
 shardIDs=${1:-1}
+nodeIDs=${2:-4}
 
 cd `dirname ${BASH_SOURCE-$0}`
 . env.sh
 
-genesisDir=${ETH_CONFIG}.${shardIDs}
-genesisTemplate=${ETH_HOME}/networks/CustomGenesis.template
+genesisDir=${ETH_CONFIG}.${shardIDs}.${nodeIDs}
+genesisTemplate=${ETH_HOME}/networks/CustomGenesis_${nodeIDs}.template
 mkdir -p $genesisDir
 
 echo '# This is custom genesis config template given about each shard'
