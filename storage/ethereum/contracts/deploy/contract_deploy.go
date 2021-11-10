@@ -14,11 +14,11 @@ import (
 func main() {
 
 	//local
-	ethnode := "/home/tianwen/Data/eth_1_1/geth.ipc"
-	hexkey := "35fc8e4f2065b6813078a08069e3a946f203029ce2bc6a62339d30c37f978403"
+	// ethnode := "/home/tianwen/Data/eth_1_1/geth.ipc"
+	// hexkey := "35fc8e4f2065b6813078a08069e3a946f203029ce2bc6a62339d30c37f978403"
 
-	// ethnode := "http://localhost:7545"
-	// hexkey := "2b2f78b59cb38b1de758dcdbe71cea29d9d4907e6921a3dd77a8e56fc71de8bf"
+	ethnode := "http://localhost:7545"
+	hexkey := "98670003f6f38d426a6b76cd7143926b9af17391a5ff76f8ee14f162511d6814"
 
 	hexaddress, tx, _, err := ClientSDK.DeployEthereumKVStoreContract(ethnode, hexkey)
 	if err != nil {

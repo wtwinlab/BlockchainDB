@@ -28,10 +28,10 @@ var (
 )
 
 // StoreABI is the input ABI used to generate the binding from.
-const StoreABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"items\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"key\",\"type\":\"bytes32\"},{\"name\":\"value\",\"type\":\"bytes\"}],\"name\":\"set\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"key\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"bytes\"}],\"name\":\"ItemSet\",\"type\":\"event\"}]"
+const StoreABI = "[{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"data\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"key\",\"type\":\"bytes\"}],\"name\":\"get\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"key\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"val\",\"type\":\"bytes\"}],\"name\":\"set\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"success\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
 
 // StoreBin is the compiled bytecode used for deploying new contracts.
-const StoreBin = `608060405234801561001057600080fd5b50610355806100206000396000f30060806040526004361061004c576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806348f343f314610051578063aac438c0146100fb575b600080fd5b34801561005d57600080fd5b506100806004803603810190808035600019169060200190929190505050610144565b6040518080602001828103825283818151815260200191508051906020019080838360005b838110156100c05780820151818401526020810190506100a5565b50505050905090810190601f1680156100ed5780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b34801561010757600080fd5b5061014260048036038101908080356000191690602001909291908035906020019082018035906020019190919293919293905050506101f4565b005b60006020528060005260406000206000915090508054600181600116156101000203166002900480601f0160208091040260200160405190810160405280929190818152602001828054600181600116156101000203166002900480156101ec5780601f106101c1576101008083540402835291602001916101ec565b820191906000526020600020905b8154815290600101906020018083116101cf57829003601f168201915b505050505081565b81816000808660001916600019168152602001908152602001600020919061021d929190610284565b507f5b60432ae9d9b7811073954a6ab7fc5ba55a88a4eb30e23c8ebf9ff1440e077d838383604051808460001916600019168152602001806020018281038252848482818152602001925080828437820191505094505050505060405180910390a1505050565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f106102c557803560ff19168380011785556102f3565b828001600101855582156102f3579182015b828111156102f25782358255916020019190600101906102d7565b5b5090506103009190610304565b5090565b61032691905b8082111561032257600081600090555060010161030a565b5090565b905600a165627a7a72305820727594dad5c7a5a8614470243c701b83653509b4fa68d6843ca1cd9715ad18280029`
+const StoreBin = `608060405234801561001057600080fd5b50610703806100206000396000f3fe608060405234801561001057600080fd5b50600436106100415760003560e01c8063a18c751e14610046578063d3d29df114610076578063d6d7d525146100a6575b600080fd5b610060600480360381019061005b9190610478565b6100d6565b60405161006d919061050b565b60405180910390f35b610090600480360381019061008b9190610526565b610115565b60405161009d91906105f7565b60405180910390f35b6100c060048036038101906100bb9190610526565b6101cb565b6040516100cd91906105f7565b60405180910390f35b6000816000846040516100e99190610655565b9081526020016040518091039020908051906020019061010a92919061027b565b506001905092915050565b600081805160208101820180518482526020830160208501208183528095505050505050600091509050805461014a9061069b565b80601f01602080910402602001604051908101604052809291908181526020018280546101769061069b565b80156101c35780601f10610198576101008083540402835291602001916101c3565b820191906000526020600020905b8154815290600101906020018083116101a657829003601f168201915b505050505081565b60606000826040516101dd9190610655565b908152602001604051809103902080546101f69061069b565b80601f01602080910402602001604051908101604052809291908181526020018280546102229061069b565b801561026f5780601f106102445761010080835404028352916020019161026f565b820191906000526020600020905b81548152906001019060200180831161025257829003601f168201915b50505050509050919050565b8280546102879061069b565b90600052602060002090601f0160209004810192826102a957600085556102f0565b82601f106102c257805160ff19168380011785556102f0565b828001600101855582156102f0579182015b828111156102ef5782518255916020019190600101906102d4565b5b5090506102fd9190610301565b5090565b5b8082111561031a576000816000905550600101610302565b5090565b6000604051905090565b600080fd5b600080fd5b600080fd5b600080fd5b6000601f19601f8301169050919050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b6103858261033c565b810181811067ffffffffffffffff821117156103a4576103a361034d565b5b80604052505050565b60006103b761031e565b90506103c3828261037c565b919050565b600067ffffffffffffffff8211156103e3576103e261034d565b5b6103ec8261033c565b9050602081019050919050565b82818337600083830152505050565b600061041b610416846103c8565b6103ad565b90508281526020810184848401111561043757610436610337565b5b6104428482856103f9565b509392505050565b600082601f83011261045f5761045e610332565b5b813561046f848260208601610408565b91505092915050565b6000806040838503121561048f5761048e610328565b5b600083013567ffffffffffffffff8111156104ad576104ac61032d565b5b6104b98582860161044a565b925050602083013567ffffffffffffffff8111156104da576104d961032d565b5b6104e68582860161044a565b9150509250929050565b60008115159050919050565b610505816104f0565b82525050565b600060208201905061052060008301846104fc565b92915050565b60006020828403121561053c5761053b610328565b5b600082013567ffffffffffffffff81111561055a5761055961032d565b5b6105668482850161044a565b91505092915050565b600081519050919050565b600082825260208201905092915050565b60005b838110156105a957808201518184015260208101905061058e565b838111156105b8576000848401525b50505050565b60006105c98261056f565b6105d3818561057a565b93506105e381856020860161058b565b6105ec8161033c565b840191505092915050565b6000602082019050818103600083015261061181846105be565b905092915050565b600081905092915050565b600061062f8261056f565b6106398185610619565b935061064981856020860161058b565b80840191505092915050565b60006106618284610624565b915081905092915050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052602260045260246000fd5b600060028204905060018216806106b357607f821691505b602082108114156106c7576106c661066c565b5b5091905056fea26469706673582212200f99c36260924eec44b9ec53d615f84d448c8f52c3e72c8958fa8d0ffab814da64736f6c63430008090033`
 
 // DeployStore deploys a new Ethereum contract, binding an instance of Store to it.
 func DeployStore(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Store, error) {
@@ -188,172 +188,65 @@ func (_Store *StoreTransactorRaw) Transact(opts *bind.TransactOpts, method strin
 	return _Store.Contract.contract.Transact(opts, method, params...)
 }
 
-// Items is a free data retrieval call binding the contract method 0x48f343f3.
+// Data is a paid mutator transaction binding the contract method 0xd3d29df1.
 //
-// Solidity: function items(bytes32 ) constant returns(bytes)
-func (_Store *StoreCaller) Items(opts *bind.CallOpts, arg0 [32]byte) ([]byte, error) {
-	var (
-		ret0 = new([]byte)
-	)
-	out := ret0
-	err := _Store.contract.Call(opts, out, "items", arg0)
-	return *ret0, err
+// Solidity: function data(bytes ) returns(bytes)
+func (_Store *StoreTransactor) Data(opts *bind.TransactOpts, arg0 []byte) (*types.Transaction, error) {
+	return _Store.contract.Transact(opts, "data", arg0)
 }
 
-// Items is a free data retrieval call binding the contract method 0x48f343f3.
+// Data is a paid mutator transaction binding the contract method 0xd3d29df1.
 //
-// Solidity: function items(bytes32 ) constant returns(bytes)
-func (_Store *StoreSession) Items(arg0 [32]byte) ([]byte, error) {
-	return _Store.Contract.Items(&_Store.CallOpts, arg0)
+// Solidity: function data(bytes ) returns(bytes)
+func (_Store *StoreSession) Data(arg0 []byte) (*types.Transaction, error) {
+	return _Store.Contract.Data(&_Store.TransactOpts, arg0)
 }
 
-// Items is a free data retrieval call binding the contract method 0x48f343f3.
+// Data is a paid mutator transaction binding the contract method 0xd3d29df1.
 //
-// Solidity: function items(bytes32 ) constant returns(bytes)
-func (_Store *StoreCallerSession) Items(arg0 [32]byte) ([]byte, error) {
-	return _Store.Contract.Items(&_Store.CallOpts, arg0)
+// Solidity: function data(bytes ) returns(bytes)
+func (_Store *StoreTransactorSession) Data(arg0 []byte) (*types.Transaction, error) {
+	return _Store.Contract.Data(&_Store.TransactOpts, arg0)
 }
 
-// Set is a paid mutator transaction binding the contract method 0xaac438c0.
+// Get is a paid mutator transaction binding the contract method 0xd6d7d525.
 //
-// Solidity: function set(bytes32 key, bytes value) returns()
-func (_Store *StoreTransactor) Set(opts *bind.TransactOpts, key [32]byte, value []byte) (*types.Transaction, error) {
-	return _Store.contract.Transact(opts, "set", key, value)
+// Solidity: function get(bytes key) returns(bytes)
+func (_Store *StoreTransactor) Get(opts *bind.TransactOpts, key []byte) (*types.Transaction, error) {
+	return _Store.contract.Transact(opts, "get", key)
 }
 
-// Set is a paid mutator transaction binding the contract method 0xaac438c0.
+// Get is a paid mutator transaction binding the contract method 0xd6d7d525.
 //
-// Solidity: function set(bytes32 key, bytes value) returns()
-func (_Store *StoreSession) Set(key [32]byte, value []byte) (*types.Transaction, error) {
-	return _Store.Contract.Set(&_Store.TransactOpts, key, value)
+// Solidity: function get(bytes key) returns(bytes)
+func (_Store *StoreSession) Get(key []byte) (*types.Transaction, error) {
+	return _Store.Contract.Get(&_Store.TransactOpts, key)
 }
 
-// Set is a paid mutator transaction binding the contract method 0xaac438c0.
+// Get is a paid mutator transaction binding the contract method 0xd6d7d525.
 //
-// Solidity: function set(bytes32 key, bytes value) returns()
-func (_Store *StoreTransactorSession) Set(key [32]byte, value []byte) (*types.Transaction, error) {
-	return _Store.Contract.Set(&_Store.TransactOpts, key, value)
+// Solidity: function get(bytes key) returns(bytes)
+func (_Store *StoreTransactorSession) Get(key []byte) (*types.Transaction, error) {
+	return _Store.Contract.Get(&_Store.TransactOpts, key)
 }
 
-// StoreItemSetIterator is returned from FilterItemSet and is used to iterate over the raw logs and unpacked data for ItemSet events raised by the Store contract.
-type StoreItemSetIterator struct {
-	Event *StoreItemSet // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *StoreItemSetIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(StoreItemSet)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(StoreItemSet)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *StoreItemSetIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *StoreItemSetIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// StoreItemSet represents a ItemSet event raised by the Store contract.
-type StoreItemSet struct {
-	Key   [32]byte
-	Value []byte
-	Raw   types.Log // Blockchain specific contextual infos
-}
-
-// FilterItemSet is a free log retrieval operation binding the contract event 0x5b60432ae9d9b7811073954a6ab7fc5ba55a88a4eb30e23c8ebf9ff1440e077d.
+// Set is a paid mutator transaction binding the contract method 0xa18c751e.
 //
-// Solidity: event ItemSet(bytes32 key, bytes value)
-func (_Store *StoreFilterer) FilterItemSet(opts *bind.FilterOpts) (*StoreItemSetIterator, error) {
-
-	logs, sub, err := _Store.contract.FilterLogs(opts, "ItemSet")
-	if err != nil {
-		return nil, err
-	}
-	return &StoreItemSetIterator{contract: _Store.contract, event: "ItemSet", logs: logs, sub: sub}, nil
+// Solidity: function set(bytes key, bytes val) returns(bool success)
+func (_Store *StoreTransactor) Set(opts *bind.TransactOpts, key []byte, val []byte) (*types.Transaction, error) {
+	return _Store.contract.Transact(opts, "set", key, val)
 }
 
-// WatchItemSet is a free log subscription operation binding the contract event 0x5b60432ae9d9b7811073954a6ab7fc5ba55a88a4eb30e23c8ebf9ff1440e077d.
+// Set is a paid mutator transaction binding the contract method 0xa18c751e.
 //
-// Solidity: event ItemSet(bytes32 key, bytes value)
-func (_Store *StoreFilterer) WatchItemSet(opts *bind.WatchOpts, sink chan<- *StoreItemSet) (event.Subscription, error) {
+// Solidity: function set(bytes key, bytes val) returns(bool success)
+func (_Store *StoreSession) Set(key []byte, val []byte) (*types.Transaction, error) {
+	return _Store.Contract.Set(&_Store.TransactOpts, key, val)
+}
 
-	logs, sub, err := _Store.contract.WatchLogs(opts, "ItemSet")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(StoreItemSet)
-				if err := _Store.contract.UnpackLog(event, "ItemSet", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
+// Set is a paid mutator transaction binding the contract method 0xa18c751e.
+//
+// Solidity: function set(bytes key, bytes val) returns(bool success)
+func (_Store *StoreTransactorSession) Set(key []byte, val []byte) (*types.Transaction, error) {
+	return _Store.Contract.Set(&_Store.TransactOpts, key, val)
 }

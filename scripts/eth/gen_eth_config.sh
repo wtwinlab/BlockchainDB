@@ -10,7 +10,7 @@ cd `dirname ${BASH_SOURCE-$0}`
 . env.sh
 
 genesisDir=${ETH_CONFIG}.${shardIDs}.${nodeIDs}
-genesisTemplate=${ETH_HOME}/networks/CustomGenesis_${nodeIDs}.template
+genesisTemplate=${ETH_HOME}/networks/CustomGenesis.template
 mkdir -p $genesisDir
 
 echo '# This is custom genesis config template given about each shard'
@@ -23,7 +23,13 @@ genesisFile="${genesisDir}/CustomGenesis_${j}.json"
 rm -f ${genesisFile}
 touch ${genesisFile}
 chainIdByShard=$((1000 + ${j}))
-jq -n --argjson chainIdByShard $chainIdByShard "${template}" > ${genesisFile}
+signer1=`geth --datadir=${ETH_DATA}_${j}_1 --password <(echo -n "") account new | cut -d '{' -f2 | cut -d '}' -f1`
+extraData="0x0000000000000000000000000000000000000000000000000000000000000000${signer1}0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+cp $genesisTemplate ${genesisFile}
+sed -i "s/Signer1/$signer1/" ${genesisFile}
+sed -i "s/ChainIdByShard/$chainIdByShard/" ${genesisFile}
+sed -i "s/ExtraData/$extraData/" ${genesisFile}
+
 echo "chainId: $chainIdByShard"
 done
 echo "Generate genesis file file ${genesisFile}"

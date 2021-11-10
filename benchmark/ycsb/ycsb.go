@@ -151,7 +151,9 @@ func main() {
 							Key:   op.Key,
 							Value: op.Val,
 						}); err != nil {
-							panic(err)
+							//panic(err)
+							fmt.Println(err)
+							//retry/discard for "desc = replacement transaction underpriced"
 						}
 						latencyCh <- time.Since(beginOp)
 					default:

@@ -1,16 +1,13 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
+pragma solidity ^0.4.24;
 
 contract KVStore {
-    mapping(bytes => bytes) public data;
+  event ItemSet(bytes32 key, bytes value);
 
-    function get(bytes memory key) public view returns (bytes memory value) {
-        return data[key];
-    }
+  mapping (bytes32 => bytes) public items;
 
-    // write method in contract
-    function set(bytes memory key, bytes memory val) public returns (bool success) {
-        data[key] = val;
-        return true;
-    }
+  function set(bytes32 key, bytes value) external {
+    items[key] = value;
+    emit ItemSet(key, value);
+  }
 }

@@ -25,22 +25,28 @@ type EthereumConnector struct {
 	TxMgr  *TxMgr.TransactionMgr
 }
 
+func keyToByte32(key string) [32]byte {
+	var key32 [32]byte
+	copy(key32[:], key)
+	return key32
+}
+
 func (ethereumConn *EthereumConnector) Read(ctx context.Context, key string) (string, error) {
-	auth, err := ethereumConn.bindTransactOpts(ctx, key) //no bind
-	result, err := ethereumConn.KV.Get(auth, []byte(key))
-	//result, err := ethereumConn.KV.Get(nil, key)
+	//auth, err := ethereumConn.bindTransactOpts(ctx, key) //no bind
+	//result, err := ethereumConn.KV.Get(auth, []byte(key))
+	result, err := ethereumConn.KV.Items(nil, keyToByte32(key))
 	if err != nil {
 		log.Println("error EthereumConnector Read ", err)
 		return "", err
 	}
-	return string(result.Data()), nil
-	//return result, nil
+	//return string(result.Data()), nil
+	return string(result), nil
 }
 
 func (ethereumConn *EthereumConnector) Write(ctx context.Context, key, value string) (string, error) {
 
 	auth, err := ethereumConn.bindTransactOpts(ctx, key)
-	tx, err := ethereumConn.KV.Set(auth, []byte(key), []byte(value))
+	tx, err := ethereumConn.KV.Set(auth, keyToByte32(key), []byte(value))
 	//tx, err := ethereumConn.KV.Set(auth, key, value)
 	if err != nil {
 		log.Println("error EthereumConnector Write ", err)
@@ -89,13 +95,13 @@ func (ethereumConn *EthereumConnector) Verify(ctx context.Context, opt, key stri
 		if err != nil {
 			return false, fmt.Errorf("value for get_key not found")
 		}
-		auth, err := ethereumConn.bindTransactOpts(ctx, key) //no bind
-		result, err := ethereumConn.KV.Get(auth, []byte(key))
+		//auth, err := ethereumConn.bindTransactOpts(ctx, key)   //no bind
+		result, err := ethereumConn.KV.Items(nil, keyToByte32(key)) //Get(auth, []byte(key))
 		if err != nil {
 			log.Println("error EthereumConnector Read ", err)
 			return false, err
 		}
-		if string(getvalue) == string(result.Data()) {
+		if string(getvalue) == string(result) {
 			return true, nil
 		} else {
 			return false, nil
