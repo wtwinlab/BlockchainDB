@@ -99,7 +99,7 @@ func (mgr *ShardingMgr) Read(ctx context.Context, key string) (string, error) {
 	// 	return "", fmt.Errorf("Error sharding key %s", key)
 	// }
 	partitionkey := mgr.partitionScheme(key)
-	return mgr.Shards[partitionkey].Read(key)
+	return mgr.Shards[partitionkey].Read(ctx, key)
 
 }
 
@@ -115,7 +115,7 @@ func (mgr *ShardingMgr) Write(ctx context.Context, key string, value string) (st
 	// 	return fmt.Errorf("Error sharding key %s", key)
 	// }
 	partitionkey := mgr.partitionScheme(key)
-	return mgr.Shards[partitionkey].Write(key, value)
+	return mgr.Shards[partitionkey].Write(ctx, key, value)
 }
 
 func (mgr *ShardingMgr) Verify(ctx context.Context, opt string, key string) (bool, error) {
@@ -130,5 +130,5 @@ func (mgr *ShardingMgr) Verify(ctx context.Context, opt string, key string) (boo
 	// 	return fmt.Errorf("Error sharding key %s", key)
 	// }
 	partitionkey := mgr.partitionScheme(key)
-	return mgr.Shards[partitionkey].Verify(opt, key)
+	return mgr.Shards[partitionkey].Verify(ctx, opt, key)
 }

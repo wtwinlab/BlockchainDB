@@ -20,6 +20,7 @@ import (
 func NewEthereumKVStoreInstance(ethnode string, hexaddress string, hexkey string, redisAddr string) (*BlockchainConnector.EthereumConnector, error) {
 
 	var conn *BlockchainConnector.EthereumConnector
+	var rdb *redis.RedisKV
 	client, err := ethclient.Dial(ethnode)
 
 	if err != nil {
@@ -34,10 +35,13 @@ func NewEthereumKVStoreInstance(ethnode string, hexaddress string, hexkey string
 		return conn, err
 	}
 	log.Println("Sucess load Contract address ", hexaddress)
-	rdb, err := redis.NewRedisKV(redisAddr, "", 1)
-	if err != nil {
-		return nil, err
+	if redisAddr != "" { //Disable verification if redisAddr is not set
+		rdb, err = redis.NewRedisKV(redisAddr, "", 1)
+		if err != nil {
+			return nil, err
+		}
 	}
+
 	txMgr := transactionMgr.NewTransactionMgr()
 	conn = &BlockchainConnector.EthereumConnector{Client: client, KV: instance, Hexkey: hexkey, Redis: rdb, TxMgr: txMgr}
 	return conn, nil

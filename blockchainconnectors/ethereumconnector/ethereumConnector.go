@@ -25,8 +25,8 @@ type EthereumConnector struct {
 	TxMgr  *TxMgr.TransactionMgr
 }
 
-func (ethereumConn *EthereumConnector) Read(key string) (string, error) {
-	auth, err := ethereumConn.bindTransactOpts(key) //no bind
+func (ethereumConn *EthereumConnector) Read(ctx context.Context, key string) (string, error) {
+	auth, err := ethereumConn.bindTransactOpts(ctx, key) //no bind
 	result, err := ethereumConn.KV.Get(auth, []byte(key))
 	//result, err := ethereumConn.KV.Get(nil, key)
 	if err != nil {
@@ -37,9 +37,9 @@ func (ethereumConn *EthereumConnector) Read(key string) (string, error) {
 	//return result, nil
 }
 
-func (ethereumConn *EthereumConnector) Write(key, value string) (string, error) {
+func (ethereumConn *EthereumConnector) Write(ctx context.Context, key, value string) (string, error) {
 
-	auth, err := ethereumConn.bindTransactOpts(key)
+	auth, err := ethereumConn.bindTransactOpts(ctx, key)
 	tx, err := ethereumConn.KV.Set(auth, []byte(key), []byte(value))
 	//tx, err := ethereumConn.KV.Set(auth, key, value)
 	if err != nil {
@@ -62,7 +62,7 @@ func (ethereumConn *EthereumConnector) Write(key, value string) (string, error) 
 	return txid, nil
 }
 
-func (ethereumConn *EthereumConnector) Verify(opt, key string) (bool, error) {
+func (ethereumConn *EthereumConnector) Verify(ctx context.Context, opt, key string) (bool, error) {
 
 	switch opt {
 	case "set": //check transaction status by txid
@@ -89,7 +89,7 @@ func (ethereumConn *EthereumConnector) Verify(opt, key string) (bool, error) {
 		if err != nil {
 			return false, fmt.Errorf("value for get_key not found")
 		}
-		auth, err := ethereumConn.bindTransactOpts(key) //no bind
+		auth, err := ethereumConn.bindTransactOpts(ctx, key) //no bind
 		result, err := ethereumConn.KV.Get(auth, []byte(key))
 		if err != nil {
 			log.Println("error EthereumConnector Read ", err)
@@ -108,8 +108,8 @@ func (ethereumConn *EthereumConnector) Verify(opt, key string) (bool, error) {
 
 }
 
-func (ethereumConn *EthereumConnector) bindTransactOpts(key string) (*bind.TransactOpts, error) {
-	gasPrice, err := ethereumConn.Client.SuggestGasPrice(context.Background())
+func (ethereumConn *EthereumConnector) bindTransactOpts(ctx context.Context, key string) (*bind.TransactOpts, error) {
+	gasPrice, err := ethereumConn.Client.SuggestGasPrice(ctx)
 	if err != nil {
 		log.Println("error parse a secp256k1 private key.", err)
 		return nil, err
@@ -134,7 +134,7 @@ func (ethereumConn *EthereumConnector) bindTransactOpts(key string) (*bind.Trans
 
 	// wait until nounce unique
 	for {
-		nonce, err := ethereumConn.Client.PendingNonceAt(context.Background(), fromAddress)
+		nonce, err := ethereumConn.Client.PendingNonceAt(ctx, fromAddress)
 		if err != nil {
 			log.Println("error return the account nonce of the given account in the pending state.", err)
 			return nil, err

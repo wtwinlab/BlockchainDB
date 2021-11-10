@@ -11,7 +11,8 @@ loadPath="$dir/temp/ycsb_data/workloada.dat"
 runPath="$dir/temp/ycsb_data/run_workloada.dat"
 
 size=${1:-1}
-ndrivers=${2:-4}
+#ndrivers=${2:-4}
+ndrivers=${size}
 #THREADS="4 8 16 32 64 128 192 256"
 nthreads=${3:-4}
 

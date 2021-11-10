@@ -35,7 +35,8 @@ echo '# This is the information that each replica is given about the other shard
 	echo "shard-id = ${j}" >> ${tomlFile}
 	echo "shard-partition-key = \"eth${j}-\"" >> ${tomlFile}
 	echo "shard-type = \"ethereum\"" >> ${tomlFile}
-	echo "eth-node = \"http://localhost:$((9000 + ${c} + 1000*${j}))\"" >> ${tomlFile}
+	#echo "eth-node = \"http://localhost:$((9000 + ${c} + 1000*${j}))\"" >> ${tomlFile}
+	echo "eth-node = \"~/Data/eth_${shardIDs}_${c}/geth.ipc\"" >> ${tomlFile}
 	echo "eth-hexaddr = \"0x70fa2c27a4e365cdf64b2d8a6c36121eb80bb442\"" >> ${tomlFile}
 	echo "eth-hexkey = \"35fc8e4f2065b6813078a08069e3a946f203029ce2bc6a62339d30c37f978403\"" >> ${tomlFile}
 	echo "fab-node = \"127.0.0.1:$((40000 + ${j}))\"" >> ${tomlFile}
