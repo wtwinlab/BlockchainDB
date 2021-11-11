@@ -14,9 +14,6 @@ cd `dirname ${BASH_SOURCE-$0}`
 #--nodiscover 
 #--targetgaslimit '67219750000000'
 
-# console
-# geth attach ./geth.ipc 
-
 # ${ETH_BIN}/geth --datadir=${ETH_DATA}_${shardID}_${nodeID}  \
 # --rpc --rpcport "$((9000 + ${nodeID} + 1000*${shardID}))" \
 # --port "$((30303 + ${nodeID} + 1000*(${shardID}-1)))" \
@@ -25,6 +22,7 @@ cd `dirname ${BASH_SOURCE-$0}`
 # --mine --minerthreads 1 \
 # --unlock 0 --password <(echo -n "") 2> ${ETH_DATA}_${shardID}_${nodeID}/geth.log &
 
+pkill -f "geth" || true
 # start bootnode
 ${ETH_BIN}/geth --datadir=${ETH_DATA}_${shardID}_${nodeID}  \
 --rpc --rpcport "$((9000 + ${nodeID} + 1000*${shardID}))" \
@@ -32,7 +30,8 @@ ${ETH_BIN}/geth --datadir=${ETH_DATA}_${shardID}_${nodeID}  \
 --gasprice 0 --mine --minerthreads 1 --miner.gaslimit 67219750000000 --unlock 0 --password <(echo -n "") \
 -networkid $((1000 + ${shardID})) 2> ${ETH_DATA}_${shardID}_${nodeID}/geth.log &
 
-sleep 5 
+echo "Sleep 3s to wait for bootnode start..."
+sleep 3 
 
 bootenode=`geth attach ${ETH_DATA}_${shardID}_${nodeID}/geth.ipc --exec admin.nodeInfo.enode | tr -d '"'`
 
@@ -46,7 +45,9 @@ ${ETH_BIN}/geth --datadir=${ETH_DATA}_${shardID}_${j}  \
 echo "member node: ${ETH_DATA}_${shardID}_${j}"
 done
 
+echo "Sleep 3s to add peers to network..."
+sleep 3
 # check bootnode admin peers
 geth attach ${ETH_DATA}_${shardID}_${nodeID}/geth.ipc --exec admin.peers
 
-geth --unlock ${BootSignerAddress} --mine --gasprice 0 --password <(echo -n "")
+#geth --unlock ${BootSignerAddress} --gasprice 0 --password <(echo -n "")

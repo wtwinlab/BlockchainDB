@@ -1,27 +1,34 @@
 # BlockchainDB
 
-##### Start blockchain network
+##### Prepare
 
 ```
-//Install Geth@v1.8.23
-//reset if exist  ~/Data/eth/
-./scripts/eth/gen_eth_config.sh 
-./scripts/eth/init_eth_account.sh
-./scripts/eth/start_eth_node.sh
-
-//Deploy KVStore contract (storage/ethereum/contracts/KVStore)
-go run storage/ethereum/contracts/deploy/contract_deploy.go
-```
-
-##### Start bcdb nodes
-
-```
-./scripts/gen_config.sh ${shardIDs} ${replicaIDs}
-./scripts/gen_ycsb_data.sh
-
-make clean
+make download
 make build
-make install $(nodes)
-make test $(nodes) $(clients)
 ```
 
+
+
+##### 1. Start blockchain network 
+
+(default: ethereum poa)
+
+```
+make ethup shards=1 nodes=4
+
+```
+
+##### 2. Start bcdb nodes
+
+```
+make install shards=1 nodes=4
+
+```
+
+##### 3. Run ycsb tests
+
+```
+make test nodes=4 clients=4
+```
+
+Check test result: test.4.4.log

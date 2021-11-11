@@ -10,11 +10,19 @@ dir=$(dirname "$0")
 
 echo "Start blockchaindb server nodes, Please input server node size(default 4)"
 shardIDs=${1:-1}
-replicaIDs=${2:-1}
+replicaIDs=${2:-4}
 
 
 bin="$dir/../cmd/bcdbnode/bcdbnode"
 tomlDir="$dir/../config.nodes.${shardIDs}.${replicaIDs}"
+
+if [ ! -f ${bin} ]; then
+    echo "Binary file ${bin} not found!"
+    echo "Hint: "
+    echo " Please build binaries by run command: make build "
+    echo "exit 1 "
+    exit 1
+fi
 
 for (( c=1; c<=$replicaIDs; c++ ))
 do 

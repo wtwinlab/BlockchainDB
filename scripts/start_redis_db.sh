@@ -2,10 +2,7 @@
 #set -x
 
 
-
 shardIDs=${1:-1}
-
-#docker pull redis:latest
 
 docker rm -f $(sudo -S docker ps -aq  --filter ancestor=redis)
 

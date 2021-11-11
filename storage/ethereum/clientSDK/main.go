@@ -82,10 +82,10 @@ func DeployEthereumKVStoreContract(ethnode string, hexkey string) (string, strin
 
 	auth := bind.NewKeyedTransactor(privateKey)
 	//auth.Nonce = big.NewInt(int64(nonce))
-	auth.Value = big.NewInt(0)       // in wei
-	auth.GasLimit = uint64(10000000) // in units
-	auth.GasPrice = gasPrice         //big.NewInt(0)
-	fmt.Println("gasPrice ", gasPrice)
+	auth.Value = big.NewInt(0)      // in wei
+	auth.GasLimit = uint64(1000000) // in units
+	auth.GasPrice = gasPrice        //big.NewInt(0)
+	//fmt.Println("gasPrice ", gasPrice)
 	address, tx, instance, err := KVStore.DeployStore(auth, client)
 	if err != nil {
 		log.Println("KVStore.DeployStore", err)
