@@ -126,8 +126,8 @@ func (ethereumConn *EthereumConnector) bindTransactOpts(ctx context.Context, key
 		return nil, err
 	}
 	auth := bind.NewKeyedTransactor(privateKey)
-	auth.Value = big.NewInt(0)       // in wei
-	auth.GasLimit = uint64(10000000) // in units
+	auth.Value = big.NewInt(0)      // in wei
+	auth.GasLimit = uint64(1000000) // in units
 	auth.GasPrice = gasPrice
 
 	publicKey := privateKey.Public()
@@ -138,7 +138,7 @@ func (ethereumConn *EthereumConnector) bindTransactOpts(ctx context.Context, key
 	}
 	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
 
-	// wait until nounce unique
+	// nounce unique to avoid transaction failure
 	for {
 		nonce, err := ethereumConn.Client.PendingNonceAt(ctx, fromAddress)
 		if err != nil {
@@ -148,7 +148,7 @@ func (ethereumConn *EthereumConnector) bindTransactOpts(ctx context.Context, key
 
 		if ethereumConn.TxMgr.WriteNounce(int64(nonce), key) {
 			auth.Nonce = big.NewInt(int64(nonce))
-			log.Println(auth.Nonce)
+			//log.Println(auth.Nonce)
 			break
 		}
 	}

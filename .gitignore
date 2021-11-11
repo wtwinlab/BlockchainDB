@@ -17,3 +17,4 @@
 # Remove binaries 
 cmd/bcdbnode/bcdbnode
 benchmark/ycsb/ycsbtest
+storage/ethereum/contracts/deploy/deyploycontract

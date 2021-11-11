@@ -1,36 +1,35 @@
-binaries := cmd/bcdbnode/bcdbnode benchmark/ycsb/ycsbtest
-nodes := 1
-clients := 1
+binaries := cmd/bcdbnode/bcdbnode benchmark/ycsb/ycsbtest storage/ethereum/contracts/deploy/deyploycontract
+nodes := 4
+clients := 4
 shards := 1
 
-.PHONY: all build clean download $(binaries) init generate install test
+.PHONY: all build clean download $(binaries) ethup install test
 
-all: $(binaries) generate init install
-
-build: $(binaries)
-
-$(binaries):
-	@go build -o ./$@ $(GCFLAGS) ./$(dir $@)
-
-download:
-	@/bin/bash scripts/gen_ycsb_data.sh
+all: build download ethup install
 
 clean:
 	@rm -fv $(binaries)
 
-generate:
-	@/bin/bash scripts/eth/gen_eth_config.sh ${shards} $(nodes)
-	@/bin/bash scripts/gen_config.sh ${shards} $(nodes)
+build: clean $(binaries)
+	
+$(binaries):
+	@go build -o ./$@ $(GCFLAGS) ./$(dir $@)
 
-init:
-	@/bin/bash scripts/start_redis_db.sh ${shards}
-	@/bin/bash scripts/eth/start_eth_node.sh $(nodes)
+download:
+	@/bin/bash scripts/ycsb/gen_ycsb_data.sh
+	@/bin/bash scripts/lib/get_docker_images.sh
+	@go mod download
+
+ethup:
+	@/bin/bash scripts/start_eth_network.sh ${shards} $(nodes)
 	
 install:
 	@/bin/bash scripts/stop_nodes.sh
+	@/bin/bash scripts/gen_config.sh ${shards} $(nodes)
+	@/bin/bash scripts/start_redis_db.sh ${shards}
 	@/bin/bash scripts/start_nodes.sh ${shards} $(nodes) > server.${shards}.$(nodes).log 2>&1 && cat server.${shards}.$(nodes).log
 
 test:
 	@echo "Test start with node size: $(nodes), client size: $(clients)"
-	@/bin/bash scripts/start_ycsb_test.sh $(nodes) $(clients) > test.$(nodes).${clients}.log 2>&1 && cat test.$(nodes).${clients}.log
+	@/bin/bash scripts/ycsb/start_ycsb_test.sh $(nodes) $(clients) > test.$(nodes).${clients}.log 2>&1 && cat test.$(nodes).${clients}.log
 

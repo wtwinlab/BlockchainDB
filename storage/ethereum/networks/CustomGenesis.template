@@ -9,14 +9,17 @@
     "constantinopleBlock": 0,
     "petersburgBlock": 0,
     "clique": {
-      "period": 5,
+      "period": 15,
       "epoch": 30000
     }
   },
-  "difficulty": "1",
-  "gasLimit": "8000000",
+  "difficulty": "0x1",
+  "gasLimit": "0x47b760",
   "extradata": "ExtraData",
   "alloc": {
-    "Signer1": { "balance": "90000000" }
+    "Signer1": { "balance": "900000000" },
+    "Signer2": { "balance": "900000000" },
+    "Signer3": { "balance": "900000000" },
+    "Signer4": { "balance": "900000000" }
   }
 }

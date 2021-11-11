@@ -2,12 +2,15 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/sbip-sg/BlockchainDB/bcdbnode/config"
 	ClientSDK "github.com/sbip-sg/BlockchainDB/storage/ethereum/clientSDK"
 )
 
@@ -15,18 +18,31 @@ func main() {
 
 	//local
 	// ethnode := "/home/tianwen/Data/eth_1_1/geth.ipc"
-	// hexkey := "35fc8e4f2065b6813078a08069e3a946f203029ce2bc6a62339d30c37f978403"
+	// hexkey := "5c01c3481aadd0a1d0828c61e32b2af82724b844de1b06673fa246df61d1a887"
 
-	ethnode := "http://localhost:7545"
-	hexkey := "98670003f6f38d426a6b76cd7143926b9af17391a5ff76f8ee14f162511d6814"
+	//ganache
+	// ethnode := "http://localhost:7545"
+	// hexkey := "98670003f6f38d426a6b76cd7143926b9af17391a5ff76f8ee14f162511d6814"
+
+	//config from file
+	configFile := flag.String("config", "config.eth.1.4/shard_1", "The path to the config file")
+	flag.Parse()
+	var conf config.Options
+	err := config.ReadConfig(&conf, *configFile)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to read config: %v\n", err)
+		os.Exit(1)
+	}
+	ethnode := conf.EthNode
+	hexkey := conf.EthHexKey
 
 	hexaddress, tx, _, err := ClientSDK.DeployEthereumKVStoreContract(ethnode, hexkey)
 	if err != nil {
 		log.Fatal("DeployEthereumKVStoreContract", err)
 	}
 
-	fmt.Println("address", hexaddress)
-	fmt.Println("tx: ", tx)
+	fmt.Printf("eth-hexaddr = \"%v\"\n", hexaddress)
+	fmt.Printf("contract-tx = \"%v\"\n", tx)
 	time.Sleep(10 * time.Second)
 
 	//Debug
@@ -42,21 +58,5 @@ func main() {
 	}
 
 	isContract := len(bytecode) > 0
-	fmt.Printf("is contract: %v\n", isContract) // is contract: true
-
-	// key := []byte("tianwen")
-	// value := []byte("hello world")
-	// result1, err := instance.Set(key, value)
-	// if err != nil {
-	// 	log.Fatal("error ethereumconn.Write ", err)
-	// }
-	// fmt.Println(result1)
-	// key := []byte("tianwen")
-	// result, err := instance.Get(nil, key)
-	// if err != nil {
-	// 	log.Fatal("error instance.Get ", err)
-	// }
-	// fmt.Println(string(result.Data()))
-	//_ = instance
-
+	fmt.Printf("contract = %v\n", isContract) // is contract: true
 }

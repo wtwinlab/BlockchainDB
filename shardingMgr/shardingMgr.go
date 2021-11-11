@@ -13,31 +13,33 @@ import (
 	//FabConnector "github.com/sbip-sg/BlockchainDB/blockchainconnectors/fabricconnector"
 	"github.com/sbip-sg/BlockchainDB/bcdbnode/config"
 	EthClientSDK "github.com/sbip-sg/BlockchainDB/storage/ethereum/clientSDK"
+
 	//FabClientSDK "github.com/sbip-sg/BlockchainDB/storage/fabric/clientSDK"
+	TxMgr "github.com/sbip-sg/BlockchainDB/transactionMgr"
 )
 
 type ShardingMgr struct {
 	Shards      map[string]Connectors.BlockchainConnector
 	Conf        map[string]config.Shard
 	ShardNumber int
-	// BCConn Connectors.BlockchainConnector
-	// EthConn *EthConnector.EthereumConnector
-	// FabConn *FabConnector.FabricConnector
+	TxMgrs      map[string]*TxMgr.TransactionMgr
 }
 
 func NewShardingMgr(conf *config.Options) (*ShardingMgr, error) {
 	shards := make(map[string]Connectors.BlockchainConnector)
 	confs := make(map[string]config.Shard)
+	TxMgrs := make(map[string]*TxMgr.TransactionMgr)
 	for _, shard := range conf.Shards {
 		switch shard.Type {
 		case PARTITION_ETH().Shard:
-			ethconn, err := EthClientSDK.NewEthereumKVStoreInstance(shard.EthNode, shard.EthHexAddr, shard.EthHexKey, shard.RedisAddr)
+			ethconn, err := EthClientSDK.NewEthereumKVStoreInstance(conf.EthNode, conf.EthHexAddr, conf.EthHexKey, shard.RedisAddr)
 			if err != nil {
 				log.Println("Failed to NewEthereumKVStoreInstance", err)
 				break
 			}
 			shards[shard.ID] = ethconn
 			confs[shard.ID] = shard
+			TxMgrs[shard.ID] = TxMgr.NewTransactionMgr()
 			log.Println("Sucess NewEthereumKVStoreInstance for shard ", shard.ID)
 		case PARTITION_FAB().Shard:
 			// #### disable sharding for ycsb tests ####

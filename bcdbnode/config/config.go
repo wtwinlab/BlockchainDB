@@ -12,6 +12,7 @@ type Options struct {
 	EthNode        string `mapstructure:"eth-node"`
 	EthHexAddr     string `mapstructure:"eth-hexaddr"`
 	EthHexKey      string `mapstructure:"eth-hexkey"`
+	EthBootSigner  string `mapstructure:"eth-boot-signer-address"`
 	FabNode        string `mapstructure:"fab-node"`
 	FabConfig      string `mapstructure:"fab-config"`
 	ShardNumber    int    `mapstructure:"shard-number"`

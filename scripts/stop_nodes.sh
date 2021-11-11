@@ -2,7 +2,7 @@
 # set -x
 
 echo "Stop all bcdbnodes"
-pgrep -f "bcdbnode"
-pkill -f "bcdbnode"
+pgrep -f "bcdbnode" || true
+pkill -f "bcdbnode"|| true
 
-echo "##################### Stop nodes successfully! ##########################"
+echo "##################### Stop bcdbnodes successfully! ##########################"
