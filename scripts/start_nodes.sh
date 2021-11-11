@@ -23,13 +23,14 @@ if [ ! -f ${bin} ]; then
     echo "exit 1 "
     exit 1
 fi
-
-for (( c=1; c<=$replicaIDs; c++ ))
-do 
-$bin --config="${tomlDir}/config${c}" &
-echo "bcdbnode$c start with config file config.nodes.${replicaIDs}.${shardIDs}/config$c.toml"
+for (( i=1; i<=${shardIDs}; i++ ))
+do
+    for (( c=1; c<=$replicaIDs; c++ ))
+    do 
+    $bin --config="${tomlDir}/config_${i}_${c}" &
+    echo "bcdbnode$c start with config file config.nodes.${replicaIDs}.${shardIDs}/config_${i}_${c}.toml"
+    done
 done
-
 echo "#########################################################################"
 echo "##################### Start blockchaindb server nodes successfully! ##########"
 echo "#########################################################################"

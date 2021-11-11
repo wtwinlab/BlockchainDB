@@ -20,15 +20,17 @@ cd `dirname ${BASH_SOURCE-$0}`
 # -networkid $((1000 + ${shardID})) \
 # --syncmode "full" --cache 4096 --gasprice 0 -\
 # --mine --minerthreads 1 \
-# --unlock 0 --password <(echo -n "") 2> ${ETH_DATA}_${shardID}_${nodeID}/geth.log &
+# --unlock 0 --password <(echo -n "") 2> ${ETH_DATA}_${shardID}_${nodeID}/eth.log &
 
 pkill -f "geth" || true
 # start bootnode
+# --miner.gaslimit 67219750000000
 ${ETH_BIN}/geth --datadir=${ETH_DATA}_${shardID}_${nodeID}  \
---rpc --rpcport "$((9000 + ${nodeID} + 1000*${shardID}))" \
+--rpc --rpcaddr 'localhost' --rpcport "$((9000 + ${nodeID} + 1000*${shardID}))" \
 --port "$((30303 + ${nodeID} + 1000*(${shardID}-1)))" \
---gasprice 0 --mine --minerthreads 1 --miner.gaslimit 67219750000000 --unlock 0 --password <(echo -n "") \
--networkid $((1000 + ${shardID})) 2> ${ETH_DATA}_${shardID}_${nodeID}/geth.log &
+--gasprice 0 --targetgaslimit 8000000 --mine --minerthreads 1 --unlock 0 --password <(echo -n "") \
+--syncmode 'full' \
+-networkid $((1000 + ${shardID})) 2> ${ETH_DATA}_${shardID}_${nodeID}/eth.log &
 
 echo "Sleep 3s to wait for bootnode start..."
 sleep 3 
@@ -38,10 +40,12 @@ bootenode=`geth attach ${ETH_DATA}_${shardID}_${nodeID}/geth.ipc --exec admin.no
 for (( j=2; j<=${nodes}; j++ ))
 do
 ${ETH_BIN}/geth --datadir=${ETH_DATA}_${shardID}_${j}  \
---rpc --rpcport "$((9000 + ${j} + 1000*${shardID}))" \
+--rpc --rpcaddr 'localhost' --rpcport "$((9000 + ${j} + 1000*${shardID}))" \
 --port "$((30303 + ${j} + 1000*(${shardID}-1)))" \
+--gasprice 0 --targetgaslimit 8000000 --mine --minerthreads 1 --unlock 0 --password <(echo -n "") \
+--syncmode 'full' \
 -networkid $((1000 + ${shardID})) \
---bootnodes ${bootenode} 2> ${ETH_DATA}_${shardID}_${j}/geth.log &
+--bootnodes ${bootenode} 2> ${ETH_DATA}_${shardID}_${j}/eth.log &
 echo "member node: ${ETH_DATA}_${shardID}_${j}"
 done
 

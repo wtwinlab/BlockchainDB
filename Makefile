@@ -5,7 +5,7 @@ shards := 1
 
 .PHONY: all build clean download $(binaries) ethup install test
 
-all: build download ethup install
+all: download build ethup install
 
 clean:
 	@rm -fv $(binaries)
@@ -17,7 +17,7 @@ $(binaries):
 
 download:
 	@/bin/bash scripts/ycsb/gen_ycsb_data.sh
-	@/bin/bash scripts/lib/get_docker_images.sh
+	@/bin/bash scripts/libs/get_docker_images.sh
 	@go mod download
 
 ethup:

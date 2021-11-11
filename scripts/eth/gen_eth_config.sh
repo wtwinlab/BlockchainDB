@@ -28,9 +28,12 @@ cp $genesisTemplate ${genesisFile}
     for (( i=1; i<=${nodeIDs}; i++ ))
     do
     signer1=`geth --datadir=${ETH_DATA}_${j}_${i} --password <(echo -n "") account new | cut -d '{' -f2 | cut -d '}' -f1`
-    sed -i "s/Signer${i}/$signer1/" ${genesisFile}
+    # sed -i "s/Signer${i}/$signer1/" ${genesisFile}
     if (( ${i} < 2 )); then
         shardsigner=${signer1}
+        allocSigners=\"${signer1}\"': { "balance": "90000000" }'
+    else
+        allocSigners=${allocSigners}', '\"${signer1}\"': { "balance": "90000000" }'
     fi
     # set 4 signers
     if (( ${i} <= 4 )); then
@@ -43,8 +46,9 @@ cp $genesisTemplate ${genesisFile}
     echo "Generate node account file  ${genesisDir}/node_${j}_${i}.toml"
     done
 extraData="0x0000000000000000000000000000000000000000000000000000000000000000${signers}0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-sed -i "s/ChainIdByShard/$chainIdByShard/" ${genesisFile}
-sed -i "s/ExtraData/$extraData/" ${genesisFile}
+sed -i "s/ChainIdByShard/${chainIdByShard}/" ${genesisFile}
+sed -i "s/ExtraData/${extraData}/" ${genesisFile}
+sed -i "s/AllocSigners/${allocSigners}/" ${genesisFile}
 
 echo "Generate genesis file  ${genesisFile}"
 

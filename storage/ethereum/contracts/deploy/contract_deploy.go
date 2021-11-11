@@ -50,7 +50,7 @@ func main() {
 	if err != nil {
 		fmt.Println("error ethclient Dail "+ethnode, err)
 	}
-	//hexaddress := "0xdC5F73E49DdC7ECF506bEAEB4f53670bC6ac53c6"
+	hexaddress = "0xB1823500dBa28A52f82AEF42333A1dDcc8AfEfDe"
 	address := common.HexToAddress(hexaddress)
 	bytecode, err := client.CodeAt(context.Background(), address, nil) // nil is latest block
 	if err != nil {
