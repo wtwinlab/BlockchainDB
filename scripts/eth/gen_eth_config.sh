@@ -24,6 +24,7 @@ rm -f ${genesisFile}
 touch ${genesisFile}
 chainIdByShard=$((1000 + ${j}))
 signer1=`geth --datadir=${ETH_DATA}_${j}_1 --password <(echo -n "") account new | cut -d '{' -f2 | cut -d '}' -f1`
+export BootSignerAddress=${signer1}
 extraData="0x0000000000000000000000000000000000000000000000000000000000000000${signer1}0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
 cp $genesisTemplate ${genesisFile}
 sed -i "s/Signer1/$signer1/" ${genesisFile}

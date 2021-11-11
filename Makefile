@@ -28,9 +28,9 @@ init:
 	
 install:
 	@/bin/bash scripts/stop_nodes.sh
-	@/bin/bash scripts/start_nodes.sh $(nodes) > server.${shards}.$(nodes).log 2>&1 && cat server.${shards}.$(nodes).log
+	@/bin/bash scripts/start_nodes.sh ${shards} $(nodes) > server.${shards}.$(nodes).log 2>&1 && cat server.${shards}.$(nodes).log
 
 test:
 	@echo "Test start with node size: $(nodes), client size: $(clients)"
-	@/bin/bash scripts/start_ycsb_test.sh $(nodes) $(clients)
+	@/bin/bash scripts/start_ycsb_test.sh $(nodes) $(clients) > test.$(nodes).${clients}.log 2>&1 && cat test.$(nodes).${clients}.log
 

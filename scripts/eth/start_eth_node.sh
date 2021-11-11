@@ -2,7 +2,9 @@
 set -ex
 
 shardID=${1:-1}
-nodeID=${2:-1}
+nodes=${2:-4}
+#bootnode
+nodeID=1
 
 cd `dirname ${BASH_SOURCE-$0}`
 . env.sh
@@ -15,4 +17,36 @@ cd `dirname ${BASH_SOURCE-$0}`
 # console
 # geth attach ./geth.ipc 
 
-${ETH_BIN}/geth --datadir=${ETH_DATA}_${shardID}_${nodeID}  --rpc --rpcport "$((9000 + ${nodeID} + 1000*${shardID}))" --port "$((30303 + ${nodeID} + 1000*(${shardID}-1)))" --syncmode "full" --cache 4096 --gasprice 0 --networkid $((1000 + ${shardID})) --mine --minerthreads 1 --unlock 0 --password <(echo -n "") 2> ${ETH_DATA}_${shardID}_${nodeID}/geth.log &
+# ${ETH_BIN}/geth --datadir=${ETH_DATA}_${shardID}_${nodeID}  \
+# --rpc --rpcport "$((9000 + ${nodeID} + 1000*${shardID}))" \
+# --port "$((30303 + ${nodeID} + 1000*(${shardID}-1)))" \
+# -networkid $((1000 + ${shardID})) \
+# --syncmode "full" --cache 4096 --gasprice 0 -\
+# --mine --minerthreads 1 \
+# --unlock 0 --password <(echo -n "") 2> ${ETH_DATA}_${shardID}_${nodeID}/geth.log &
+
+# start bootnode
+${ETH_BIN}/geth --datadir=${ETH_DATA}_${shardID}_${nodeID}  \
+--rpc --rpcport "$((9000 + ${nodeID} + 1000*${shardID}))" \
+--port "$((30303 + ${nodeID} + 1000*(${shardID}-1)))" \
+--gasprice 0 --mine --minerthreads 1 --miner.gaslimit 67219750000000 --unlock 0 --password <(echo -n "") \
+-networkid $((1000 + ${shardID})) 2> ${ETH_DATA}_${shardID}_${nodeID}/geth.log &
+
+sleep 5 
+
+bootenode=`geth attach ${ETH_DATA}_${shardID}_${nodeID}/geth.ipc --exec admin.nodeInfo.enode | tr -d '"'`
+
+for (( j=2; j<=${nodes}; j++ ))
+do
+${ETH_BIN}/geth --datadir=${ETH_DATA}_${shardID}_${j}  \
+--rpc --rpcport "$((9000 + ${j} + 1000*${shardID}))" \
+--port "$((30303 + ${j} + 1000*(${shardID}-1)))" \
+-networkid $((1000 + ${shardID})) \
+--bootnodes ${bootenode} 2> ${ETH_DATA}_${shardID}_${j}/geth.log &
+echo "member node: ${ETH_DATA}_${shardID}_${j}"
+done
+
+# check bootnode admin peers
+geth attach ${ETH_DATA}_${shardID}_${nodeID}/geth.ipc --exec admin.peers
+
+geth --unlock ${BootSignerAddress} --mine --gasprice 0 --password <(echo -n "")

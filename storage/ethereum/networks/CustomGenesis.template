@@ -15,8 +15,8 @@
   },
   "difficulty": "1",
   "gasLimit": "8000000",
-  "extradata": ExtraData,
+  "extradata": "ExtraData",
   "alloc": {
-    "Signer1": { "balance": "90000000" },
+    "Signer1": { "balance": "90000000" }
   }
 }
