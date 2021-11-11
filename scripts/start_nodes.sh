@@ -9,8 +9,9 @@
 dir=$(dirname "$0")
 
 echo "Start blockchaindb server nodes, Please input server node size(default 4)"
-replicaIDs=${1:-1}
-shardIDs=${2:-1}
+shardIDs=${1:-1}
+replicaIDs=${2:-1}
+
 
 bin="$dir/../cmd/bcdbnode/bcdbnode"
 tomlDir="$dir/../config.nodes.${shardIDs}.${replicaIDs}"
