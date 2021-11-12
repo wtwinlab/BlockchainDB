@@ -169,27 +169,35 @@ func main() {
 			}(i)
 		}
 	}
+	fmt.Println("get/set opt is ongoing ... ", lastkey)
 	wg.Wait()
 	close(latencyCh)
 	wg2.Wait()
 
 	fmt.Println("Last opt verify is ongoing ... ", lastopt)
 	fmt.Println("Last key verify is ongoing ... ", lastkey)
-	for {
-		if lastkey == "" || lastopt == "" {
-			fmt.Println("No setopt tx to verify .")
-			break
+	wg3 := sync.WaitGroup{}
+	wg3.Add(1)
+	go func() {
+		defer wg3.Done()
+		for {
+			if lastkey == "" || lastopt == "" {
+				fmt.Println("No setopt tx to verify .")
+				break
+			}
+			verify, err := clis[0].Verify(context.Background(), &pbv.VerifyRequest{Opt: lastopt, Key: lastkey})
+			if err != nil {
+				fmt.Println(err)
+			}
+			if verify != nil && verify.Success {
+				fmt.Println("Last tx verify done.")
+				break
+			}
+			time.Sleep(2 * time.Second)
 		}
-		verify, err := clis[0].Verify(context.Background(), &pbv.VerifyRequest{Opt: lastopt, Key: lastkey})
-		if err != nil {
-			fmt.Println(err)
-		}
-		if verify != nil && verify.Success {
-			fmt.Println("Last tx verify done.")
-			break
-		}
-		time.Sleep(2 * time.Second)
-	}
+	}()
+	wg3.Wait()
+
 	fmt.Println("#########################################################################")
 	fmt.Printf("Throughput of %v drivers with %v concurrency to handle %v requests: %v req/s\n",
 		*driverNum, *driverConcurrency, reqNum.Load(),
