@@ -27,7 +27,7 @@ func main() {
 	//redisAddr := "127.0.0.1:60001"
 
 	//config from file
-	configFile := flag.String("config", "config.nodes.1.4/config1", "The path to the config file")
+	configFile := flag.String("config", "config.nodes.1.4/config_1_1", "The path to the config file")
 	flag.Parse()
 	var conf config.Options
 	err := config.ReadConfig(&conf, *configFile)
@@ -45,7 +45,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	//key := []byte("tianwen")
 	key := "tianwen-7"
 	value := "helloworld7"
 	result1, err := ethereumconn.Write(context.Background(), key, value)
