@@ -10,11 +10,12 @@ bestclients=${2:-16}
 
 
 # Experiment 2
-./experiment2.sh ${bestclients}
+./experiment2.sh ${bestclients} > experiment2.log 2>&1
 
 
 # Experiment 4
-./experiment3.sh ${bestnodes} ${bestclients}
+./experiment3.sh ${bestnodes} ${bestclients} > experiment4.log 2>&1
+
 
 
 # Experiment 3
