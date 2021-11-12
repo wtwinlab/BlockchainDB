@@ -3,9 +3,11 @@ nodes := 4
 clients := 4
 shards := 1
 
-.PHONY: all build clean download $(binaries) ethup install test
+.PHONY: all build clean download $(binaries) ethnet install test
 
-all: download build ethup install
+all: download build ethnet install
+
+fast: ethnet install
 
 clean:
 	@rm -fv $(binaries)
@@ -20,7 +22,7 @@ download:
 	@/bin/bash scripts/libs/get_docker_images.sh
 	@go mod download
 
-ethup:
+ethnet:
 	@/bin/bash scripts/start_eth_network.sh ${shards} $(nodes)
 	
 install:

@@ -130,6 +130,7 @@ func main() {
 	}()
 	time.Sleep(5 * time.Second)
 
+	lastsetopt := ""
 	start := time.Now()
 	for i := 0; i < *driverNum; i++ {
 		for j := 0; j < *driverConcurrency; j++ {
@@ -156,6 +157,7 @@ func main() {
 							//retry/discard for "desc = replacement transaction underpriced"
 						}
 						latencyCh <- time.Since(beginOp)
+						lastsetopt = op.Key
 					default:
 						panic(fmt.Sprintf("invalid operation: %v", op.ReqType))
 					}
@@ -167,6 +169,17 @@ func main() {
 	close(latencyCh)
 	wg2.Wait()
 
+	fmt.Println("Last set opt verify is ongoing ... ", lastsetopt)
+	for {
+		verify, err := clis[0].Verify(context.Background(), &pbv.VerifyRequest{Opt: "set", Key: lastsetopt})
+		if err != nil {
+			fmt.Println(err)
+		}
+		if verify != nil && verify.Success {
+			fmt.Println("Last set opt verify done.")
+			break
+		}
+	}
 	fmt.Println("#########################################################################")
 	fmt.Printf("Throughput of %v drivers with %v concurrency to handle %v requests: %v req/s\n",
 		*driverNum, *driverConcurrency, reqNum.Load(),

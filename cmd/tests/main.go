@@ -11,7 +11,7 @@ import (
 
 func main() {
 	addr := "127.0.0.1:50001"
-	key := "tianwen1108"
+	key := "tianwen11081616"
 	value := "66666666666666666666666666"
 
 	conn, err := grpc.Dial(addr, grpc.WithInsecure())
@@ -24,9 +24,11 @@ func main() {
 	res, err := cli.Set(context.Background(), &pbv.SetRequest{Key: key, Value: value})
 	if err != nil {
 		fmt.Println(err)
+	} else {
+		fmt.Println(res.Tx)
 	}
 	fmt.Println("BlockchainDB Set done.")
-	fmt.Println(res.Tx)
+
 	counter := 0
 	for {
 		counter += 1
@@ -37,14 +39,20 @@ func main() {
 		}
 
 		if string(res1.Value) != "" {
-			fmt.Println("read query round ", counter)
-		} else {
-			fmt.Println("Blockchain Get done.")
 			fmt.Println(string(res1.Value))
 			elapsed := time.Since(start)
-			fmt.Printf("Tx set-get took %s", elapsed)
+			fmt.Printf("Tx set-get took %s\n", elapsed)
 			break
 		}
 	}
+	fmt.Println("read query round ", counter)
+	fmt.Println("Blockchain Get done.")
 
+	res3, err := cli.Verify(context.Background(), &pbv.VerifyRequest{Opt: "set", Key: key})
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(res3.Success)
+	}
+	fmt.Println("BlockchainDB verify done.")
 }

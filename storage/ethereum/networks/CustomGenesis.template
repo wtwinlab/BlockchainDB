@@ -14,7 +14,7 @@
     }
   },
   "difficulty": "1",
-  "gasLimit": "8000000",
+  "gasLimit": "10000000",
   "extradata": "ExtraData",
   "alloc": {
     AllocSigners
