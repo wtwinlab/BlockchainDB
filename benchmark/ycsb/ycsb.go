@@ -27,6 +27,8 @@ var (
 func main() {
 	kingpin.Parse()
 
+	fmt.Println("Time start: ", time.Now())
+
 	addrs := strings.Split(*serverAddrs, ",")
 	clis := make([]pbv.BCdbNodeClient, 0)
 	conns := make([]*grpc.ClientConn, 0)
@@ -83,21 +85,21 @@ func main() {
 		avaLatency = float64(all) / float64(reqNum.Load())
 	}()
 	// Init Data
-	for i := 0; i < 256; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for kv := range loadBuf {
-				if _, err := clis[0].Set(context.Background(), &pbv.SetRequest{
-					Key:   kv[0],
-					Value: kv[1],
-				}); err != nil {
-					panic(err)
-				}
-			}
-		}()
-	}
-	wg.Wait()
+	// for i := 0; i < 256; i++ {
+	// 	wg.Add(1)
+	// 	go func() {
+	// 		defer wg.Done()
+	// 		for kv := range loadBuf {
+	// 			if _, err := clis[0].Set(context.Background(), &pbv.SetRequest{
+	// 				Key:   kv[0],
+	// 				Value: kv[1],
+	// 			}); err != nil {
+	// 				panic(err)
+	// 			}
+	// 		}
+	// 	}()
+	// }
+	// wg.Wait()
 
 	runFile, err := os.Open(*dataRun)
 	if err != nil {
@@ -185,9 +187,9 @@ func main() {
 				fmt.Println("No setopt tx to verify .")
 				break
 			}
-			verify, err := clis[0].Verify(context.Background(), &pbv.VerifyRequest{Opt: lastopt, Key: lastkey})
+			verify, err := clis[1].Verify(context.Background(), &pbv.VerifyRequest{Opt: lastopt, Key: lastkey})
 			if err != nil {
-				fmt.Println(err)
+				//fmt.Println(err)
 			}
 			if verify != nil && verify.Success {
 				fmt.Println("Last tx verify done.")
@@ -205,4 +207,6 @@ func main() {
 	)
 	fmt.Printf("Average latency: %v ms\n", avaLatency)
 	fmt.Println("#########################################################################")
+	fmt.Println("Time stop: ", time.Now())
+
 }

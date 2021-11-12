@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ex
+# set -ex
 
 shardIDs=${1:-1}
 nodeIDs=${2:-4}

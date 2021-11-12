@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-set -ex
+# set -ex
 
 echo "restart: kill all ethnodes"
-pkill "geth" || true
-# sleep 2
+# pkill -f "geth" || true
+kill -9 $(ps -ef|grep "geth"|grep -v "grep"|awk '{print $2}')
+sleep 2
 
 echo "Start ethereum nodes, Please input shard size(default 1), node size(default 4)"
 shards=${1:-1}

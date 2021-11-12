@@ -4,6 +4,7 @@
 # echo "restart: kill all previous bcdbnode"
 # pgrep -f "bcdbnode"
 # pkill -f "bcdbnode"
+# kill -9 $(ps -ef|grep "geth"|grep -v "grep"|awk '{print $2}')
 # sleep 5
 
 dir=$(dirname "$0")
