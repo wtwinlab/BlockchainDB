@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
-#set -x
+set -ex
 
 
 bestnodes=${1:-16}
 bestclients=${2:-16}
-
+dir=$(pwd)
 # Experiment 1
-./experiment1.sh 4 > experiment1.log 2>&1
+${dir}/scripts/experiment1.sh 4 > experiment1.log 2>&1
 
 
 # Experiment 2
-./experiment2.sh ${bestclients} > experiment2.log 2>&1
+${dir}/scripts/experiment2.sh ${bestclients} > experiment2.log 2>&1
 
 
 # Experiment 4
-./experiment3.sh ${bestnodes} ${bestclients} > experiment4.log 2>&1
+${dir}/scripts/experiment3.sh ${bestnodes} ${bestclients} > experiment4.log 2>&1
 
 
 
