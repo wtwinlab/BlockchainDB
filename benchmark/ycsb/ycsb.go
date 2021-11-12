@@ -130,7 +130,8 @@ func main() {
 	}()
 	time.Sleep(5 * time.Second)
 
-	lastsetopt := ""
+	lastopt := ""
+	lastkey := ""
 	start := time.Now()
 	for i := 0; i < *driverNum; i++ {
 		for j := 0; j < *driverConcurrency; j++ {
@@ -146,6 +147,8 @@ func main() {
 							fmt.Println(err)
 						}
 						latencyCh <- time.Since(beginOp)
+						// lastopt = "get"
+						// lastkey = op.Key
 					case benchmark.SetOp:
 						beginOp := time.Now()
 						if _, err := clis[seq].Set(context.Background(), &pbv.SetRequest{
@@ -157,7 +160,8 @@ func main() {
 							//retry/discard for "desc = replacement transaction underpriced"
 						}
 						latencyCh <- time.Since(beginOp)
-						lastsetopt = op.Key
+						lastopt = "set"
+						lastkey = op.Key
 					default:
 						panic(fmt.Sprintf("invalid operation: %v", op.ReqType))
 					}
@@ -169,16 +173,22 @@ func main() {
 	close(latencyCh)
 	wg2.Wait()
 
-	fmt.Println("Last set opt verify is ongoing ... ", lastsetopt)
+	fmt.Println("Last opt verify is ongoing ... ", lastopt)
+	fmt.Println("Last key verify is ongoing ... ", lastkey)
 	for {
-		verify, err := clis[0].Verify(context.Background(), &pbv.VerifyRequest{Opt: "set", Key: lastsetopt})
+		if lastkey == "" || lastopt == "" {
+			fmt.Println("No setopt tx to verify .")
+			break
+		}
+		verify, err := clis[0].Verify(context.Background(), &pbv.VerifyRequest{Opt: lastopt, Key: lastkey})
 		if err != nil {
 			fmt.Println(err)
 		}
 		if verify != nil && verify.Success {
-			fmt.Println("Last set opt verify done.")
+			fmt.Println("Last tx verify done.")
 			break
 		}
+		time.Sleep(2 * time.Second)
 	}
 	fmt.Println("#########################################################################")
 	fmt.Printf("Throughput of %v drivers with %v concurrency to handle %v requests: %v req/s\n",
