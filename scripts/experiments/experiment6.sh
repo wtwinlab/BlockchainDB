@@ -10,7 +10,7 @@ TXSIZES="512B 2kB 8kB 32kB 128kB"
 echo "========================================================"
 printf -v date '%(%Y-%m-%d %H:%M:%S)T\n' -1 
 echo " Experiment 3 start"
-make fast nodes=${bestnodes}
+#make fast nodes=${bestnodes}
 make test nodes=${bestnodes} clients=${bestclients} distribution=ycsb_data_2kB
 make test nodes=${bestnodes} clients=${bestclients} distribution=ycsb_data_8kB
 make test nodes=${bestnodes} clients=${bestclients} distribution=ycsb_data_32kB

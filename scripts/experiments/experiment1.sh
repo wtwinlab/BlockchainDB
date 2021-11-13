@@ -7,7 +7,7 @@ size=${1:-4}
 echo "========================================================"
 printf -v date '%(%Y-%m-%d %H:%M:%S)T\n' -1 
 echo " Experiment 1 start"
-make fast shards=1 nodes=${size}
+#make fast shards=1 nodes=${size}
 make test nodes=${size} clients=4
 make test nodes=${size} clients=8
 make test nodes=${size} clients=16

@@ -9,7 +9,7 @@ bestclients=${2:-16}
 echo "========================================================"
 printf -v date '%(%Y-%m-%d %H:%M:%S)T\n' -1 
 echo " Experiment 3 start"
-make fast nodes=${bestnodes}
+#make fast nodes=${bestnodes}
 make test nodes=${bestnodes} clients=${bestclients} distribution=ycsb_data
 make test nodes=${bestnodes} clients=${bestclients} distribution=ycsb_data_latest
 make test nodes=${bestnodes} clients=${bestclients} distribution=ycsb_data_zipfian

@@ -22,5 +22,5 @@ ${dir}/scripts/experiments/experiment1.sh 4 >> experiments.log/experiment1.log 2
 
 
 # Experiment 2
-${dir}/scripts/experiments/experiment2.sh ${bestclients} >> experiments.log/experiment2.log 2>&1
+#${dir}/scripts/experiments/experiment2.sh ${bestclients} >> experiments.log/experiment2.log 2>&1
 
