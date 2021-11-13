@@ -5,6 +5,7 @@ set -ex
 size=${1:-4}
 clients=${2:-4} 
 workload=${3:-a}
+distribution=${4:-ycsb_data}
 ndrivers=${size}
 nthreads=$(( ${clients} / ${ndrivers} ))
 
@@ -13,8 +14,8 @@ echo $dir
 
 bin="$dir/benchmark/ycsb/ycsbtest"
 defaultAddrs="127.0.0.1:50001"
-loadPath="$dir/temp/ycsb_data/workload${workload}.dat"
-runPath="$dir/temp/ycsb_data/run_workload${workload}.dat"
+loadPath="$dir/temp/${distribution}/workload${workload}.dat"
+runPath="$dir/temp/${distribution}/run_workload${workload}.dat"
 
 
 # nthreads= 1 2 4 16 32 64
@@ -37,6 +38,6 @@ done
 echo "start test with bcdbnode addrs: ${defaultAddrs}"
 
 
-$bin --load-path=$loadPath --run-path=$runPath --ndrivers=$ndrivers --nthreads=$nthreads --server-addrs=${defaultAddrs} &
+$bin --load-path=$loadPath --run-path=$runPath --ndrivers=$ndrivers --nthreads=$nthreads --server-addrs=${defaultAddrs} 
 #2>&1 | tee test.log 
 #> test.$(nodes).${clients}.log 2>&1 && cat test.$(nodes).${clients}.log

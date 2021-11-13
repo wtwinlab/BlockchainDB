@@ -164,7 +164,7 @@ func main() {
 							//retry/discard
 						}
 						if res != nil {
-							fmt.Println(res.Tx)
+							//fmt.Println(res.Tx)
 						}
 						latencyCh <- time.Since(beginOp)
 						lastopt = "set"
@@ -197,7 +197,7 @@ func main() {
 			}
 			verify, err := clis[1].Verify(context.Background(), &pbv.VerifyRequest{Opt: lastopt, Key: lastkey})
 			if err != nil {
-				fmt.Println(err)
+				//fmt.Println(err)
 			} else {
 				if verify != nil && verify.Success {
 					fmt.Println("Last tx verify done.")
@@ -213,8 +213,8 @@ func main() {
 	wg3.Wait()
 
 	fmt.Println("#########################################################################")
-	fmt.Printf("%v drivers with %v concurrency to handle %v requests --> Throughput: %v req/s, ",
-		*driverNum, *driverConcurrency, reqNum.Load(),
+	fmt.Printf("%v servers %v drivers with %v concurrency to handle %v requests(loadpath %v workload %v ) --> Throughput: %v req/s, ",
+		len(addrs), *driverNum, *driverConcurrency, reqNum.Load(), *dataRun, *dataLoad,
 		int64(float64(reqNum.Load())/time.Since(start).Seconds()),
 	)
 	fmt.Printf("Average latency: %v ms\n", avaLatency)
