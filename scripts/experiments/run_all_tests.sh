@@ -14,7 +14,7 @@ ${dir}/scripts/experiments/experiment2.sh ${bestclients} > experiment2.log 2>&1
 
 
 # Experiment 4
-${dir}/scripts/experiments/experiment3.sh ${bestnodes} ${bestclients} > experiment4.log 2>&1
+${dir}/scripts/experiments/experiment4.sh ${bestnodes} ${bestclients} > experiment4.log 2>&1
 
 
 

@@ -4,8 +4,9 @@
 
 shardIDs=${1:-1}
 
-docker rm -f $(sudo -S docker ps -aq  --filter ancestor=redis)
 docker ps |grep shard
+# docker rm -f $(sudo -S docker ps -aq  --filter ancestor=redis)
+# docker ps |grep shard
 
 for (( c=1; c<=${shardIDs}; c++ ))
 do

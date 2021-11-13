@@ -36,5 +36,5 @@ install:
 
 test:
 	@echo "Test start with node size: $(nodes), client size: $(clients)"
-	@/bin/bash scripts/ycsb/start_ycsb_test.sh $(nodes) $(clients) ${workload} 2>&1 | tee test.$(nodes).${clients}.log
+	@/bin/bash scripts/ycsb/start_ycsb_test.sh $(nodes) $(clients) ${workload} > test.$(nodes).${clients}.log 2>&1 && cat test.$(nodes).${clients}.log
 

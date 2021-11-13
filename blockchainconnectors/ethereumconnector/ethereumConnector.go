@@ -77,12 +77,12 @@ func (ethereumConn *EthereumConnector) Verify(ctx context.Context, opt, key stri
 			return false, fmt.Errorf("txid for set_key not found")
 		}
 		txhash := common.HexToHash(string(txid))
-
+		log.Println("verifying tx", string(txid))
 		receipt, err := ethereumConn.Client.TransactionReceipt(context.Background(), txhash)
 		if err != nil {
 			return false, fmt.Errorf("TransactionReceipt %v %v", string(txid), err)
 		}
-		log.Println("verifying tx", string(txid))
+
 		if receipt == nil {
 			return false, fmt.Errorf("TransactionReceipt null %v", txhash)
 		}
