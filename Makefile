@@ -8,7 +8,7 @@ workload := a
 
 all: download build ethnet install
 
-fast: ethnet install
+fast: build ethnet install
 
 clean:
 	@rm -fv $(binaries)
