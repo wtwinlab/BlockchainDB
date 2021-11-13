@@ -4,11 +4,11 @@ clients := 4
 shards := 1
 workload := a
 
-.PHONY: all build clean download $(binaries) ethnet install test
+.PHONY: all build clean download $(binaries) ethnet install verify test
 
-all: download build ethnet install
+all: download build ethnet install verify
 
-fast: build ethnet install
+fast: build ethnet install verify
 
 clean:
 	@rm -fv $(binaries)
@@ -33,6 +33,9 @@ install:
 	@/bin/bash scripts/stop_nodes.sh
 	@/bin/bash scripts/gen_config.sh ${shards} $(nodes)
 	@/bin/bash scripts/start_nodes.sh ${shards} $(nodes) > server.${shards}.$(nodes).log 2>&1 && cat server.${shards}.$(nodes).log
+
+verify:
+	@go run cmd/tests/main.go
 
 test:
 	@echo "Test start with node size: $(nodes), client size: $(clients)"
