@@ -28,7 +28,8 @@ func main() {
 	kingpin.Parse()
 
 	fmt.Println("Time start: ", time.Now())
-
+	lastopt := ""
+	lastkey := ""
 	addrs := strings.Split(*serverAddrs, ",")
 	clis := make([]pbv.BCdbNodeClient, 0)
 	conns := make([]*grpc.ClientConn, 0)
@@ -85,21 +86,25 @@ func main() {
 		avaLatency = float64(all) / float64(reqNum.Load())
 	}()
 	// Init Data
-	// for i := 0; i < 256; i++ {
-	// 	wg.Add(1)
-	// 	go func() {
-	// 		defer wg.Done()
-	// 		for kv := range loadBuf {
-	// 			if _, err := clis[0].Set(context.Background(), &pbv.SetRequest{
-	// 				Key:   kv[0],
-	// 				Value: kv[1],
-	// 			}); err != nil {
-	// 				panic(err)
-	// 			}
-	// 		}
-	// 	}()
-	// }
-	// wg.Wait()
+	for i := 0; i < 256; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for kv := range loadBuf {
+				if kv[0] != "READ" {
+					lastkey = kv[1]
+				}
+				// Only init once
+				// if _, err := clis[0].Set(context.Background(), &pbv.SetRequest{
+				// 	Key:   kv[0],
+				// 	Value: kv[1],
+				// }); err != nil {
+				// 	panic(err)
+				// }
+			}
+		}()
+	}
+	wg.Wait()
 
 	runFile, err := os.Open(*dataRun)
 	if err != nil {
@@ -132,8 +137,6 @@ func main() {
 	}()
 	time.Sleep(5 * time.Second)
 
-	lastopt := ""
-	lastkey := ""
 	start := time.Now()
 	for i := 0; i < *driverNum; i++ {
 		for j := 0; j < *driverConcurrency; j++ {
@@ -149,17 +152,19 @@ func main() {
 							fmt.Println(err)
 						}
 						latencyCh <- time.Since(beginOp)
-						// lastopt = "get"
-						// lastkey = op.Key
 					case benchmark.SetOp:
 						beginOp := time.Now()
-						if _, err := clis[seq].Set(context.Background(), &pbv.SetRequest{
+						res, err := clis[seq].Set(context.Background(), &pbv.SetRequest{
 							Key:   op.Key,
 							Value: op.Val,
-						}); err != nil {
+						})
+						if err != nil {
 							//panic(err)
 							fmt.Println(err)
-							//retry/discard for "desc = replacement transaction underpriced"
+							//retry/discard
+						}
+						if res != nil {
+							fmt.Println(res.Tx)
 						}
 						latencyCh <- time.Since(beginOp)
 						lastopt = "set"
@@ -173,8 +178,11 @@ func main() {
 	}
 	fmt.Println("get/set opt is ongoing ... ", lastkey)
 	wg.Wait()
+	fmt.Println("wg.Wait() ... ", lastkey)
 	close(latencyCh)
+	fmt.Println("close(latencyCh) ... ", lastkey)
 	wg2.Wait()
+	fmt.Println("wg2.Wait() ... ", lastkey)
 
 	fmt.Println("Last opt verify is ongoing ... ", lastopt)
 	fmt.Println("Last key verify is ongoing ... ", lastkey)
@@ -189,19 +197,23 @@ func main() {
 			}
 			verify, err := clis[1].Verify(context.Background(), &pbv.VerifyRequest{Opt: lastopt, Key: lastkey})
 			if err != nil {
-				//fmt.Println(err)
+				fmt.Println(err)
+			} else {
+				if verify != nil && verify.Success {
+					fmt.Println("Last tx verify done.")
+					break
+				} else {
+					fmt.Println("verify is ongoing ... ", lastkey)
+				}
 			}
-			if verify != nil && verify.Success {
-				fmt.Println("Last tx verify done.")
-				break
-			}
+
 			time.Sleep(2 * time.Second)
 		}
 	}()
 	wg3.Wait()
 
 	fmt.Println("#########################################################################")
-	fmt.Printf("Throughput of %v drivers with %v concurrency to handle %v requests: %v req/s\n",
+	fmt.Printf("%v drivers with %v concurrency to handle %v requests --> Throughput: %v req/s, ",
 		*driverNum, *driverConcurrency, reqNum.Load(),
 		int64(float64(reqNum.Load())/time.Since(start).Seconds()),
 	)

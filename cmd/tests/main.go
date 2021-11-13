@@ -28,7 +28,7 @@ func main() {
 	} else {
 		fmt.Println(res.Tx)
 	}
-	fmt.Println("BlockchainDB Set done.")
+	fmt.Println("1.BlockchainDB Set done.")
 
 	counter := 0
 	for {
@@ -47,7 +47,7 @@ func main() {
 		}
 	}
 	fmt.Println("read query round ", counter)
-	fmt.Println("Blockchain Get done.")
+	fmt.Println("2.Blockchain Get done.")
 
 	lastkey := key
 	lastopt := "set"
@@ -72,5 +72,5 @@ func main() {
 		}
 	}()
 	wg3.Wait()
-	fmt.Println("BlockchainDB verify done.")
+	fmt.Println("3.BlockchainDB verify done.")
 }

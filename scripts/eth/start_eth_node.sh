@@ -23,7 +23,12 @@ cd `dirname ${BASH_SOURCE-$0}`
 # --unlock 0 --password <(echo -n "") 2> ${ETH_DATA}_${shardID}_${nodeID}/eth.log &
 
 # pkill -f "geth" || true
-kill -9 $(ps -ef|grep "geth"|grep -v "grep"|awk '{print $2}') || true
+# kill $(ps -ef|grep "geth"|grep -v "grep"|awk '{print $2}') || true
+pgeth=`ps -ef|grep "geth"|grep -v "grep"|wc -l`
+echo ${pgeth}
+if (( ${pgeth} > 0 )); then 
+   kill $(ps -ef|grep "geth"|grep -v "grep"|awk '{print $2}')
+fi
 sleep 2
 # start bootnode
 # --miner.gaslimit 67219750000000

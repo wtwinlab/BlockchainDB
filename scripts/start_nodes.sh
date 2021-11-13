@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# set -x
+set -ex
 
 # echo "restart: kill all previous bcdbnode"
 # pgrep -f "bcdbnode"
@@ -16,7 +16,7 @@ replicaIDs=${2:-4}
 
 bin="$dir/../cmd/bcdbnode/bcdbnode"
 tomlDir="$dir/../config.nodes.${shardIDs}.${replicaIDs}"
-
+mkdir -p nodelog
 if [ ! -f ${bin} ]; then
     echo "Binary file ${bin} not found!"
     echo "Hint: "
@@ -28,8 +28,8 @@ for (( i=1; i<=${shardIDs}; i++ ))
 do
     for (( c=1; c<=$replicaIDs; c++ ))
     do 
-    $bin --config="${tomlDir}/config_${i}_${c}" &
-    echo "bcdbnode$c start with config file config.nodes.${replicaIDs}.${shardIDs}/config_${i}_${c}.toml"
+    $bin --config="${tomlDir}/config_${i}_${c}" > nodelog/node.${i}.${c}.log 2>&1 &
+    echo "bcdbnode$c start with config file config.nodes.${shardIDs}.${replicaIDs}/config_${i}_${c}.toml"
     done
 done
 echo "#########################################################################"
