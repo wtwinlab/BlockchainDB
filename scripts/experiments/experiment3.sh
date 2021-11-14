@@ -2,7 +2,7 @@
 set -ex
 
 bestnodes=${1:-4}
-bestclients=${2:-16}
+bestclients=${2:-256}
 
 # Experiment 3
 # DISTROS="uniform latest zipfian"

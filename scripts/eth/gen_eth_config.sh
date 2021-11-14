@@ -36,7 +36,7 @@ cp $genesisTemplate ${genesisFile}
         allocSigners=${allocSigners}', '\"${signer1}\"': { "balance": "90000000" }'
     fi
     # set 4 signers
-    if (( ${i} <= 4 )); then
+    if (( ${i} <= ${nodeIDs} )); then
         signers=${signers}${signer1}
     fi
     echo "eth-node = \"${HOME}/Data/eth_${shardIDs}_${i}/geth.ipc\"" > ${genesisDir}/node_${j}_${i}.toml

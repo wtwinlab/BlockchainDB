@@ -38,6 +38,6 @@ done
 echo "start test with bcdbnode addrs: ${defaultAddrs}"
 
 
-$bin --load-path=$loadPath --run-path=$runPath --ndrivers=$ndrivers --nthreads=$nthreads --server-addrs=${defaultAddrs} 
+$bin --load-path=$loadPath --run-path=$runPath --ndrivers=$ndrivers --nthreads=$nthreads --server-addrs=${defaultAddrs} &  
 #2>&1 | tee test.log 
 #> test.$(nodes).${clients}.log 2>&1 && cat test.$(nodes).${clients}.log

@@ -32,7 +32,7 @@ fi
 sleep 2
 # start bootnode
 # --miner.gaslimit 67219750000000
-# --netrestrict 
+# --netrestrict --gcmode 'archive'
 ${ETH_BIN}/geth --datadir=${ETH_DATA}_${shardID}_${nodeID}  \
 --rpc --rpcaddr 'localhost' --rpcport "$((9000 + ${nodeID} + 1000*${shardID}))" \
 --port "$((30303 + ${nodeID} + 1000*(${shardID}-1)))" \
