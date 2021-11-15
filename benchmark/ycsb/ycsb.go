@@ -12,6 +12,7 @@ import (
 	"google.golang.org/grpc"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 
+	"github.com/pkg/profile"
 	"github.com/sbip-sg/BlockchainDB/benchmark"
 	pbv "github.com/sbip-sg/BlockchainDB/proto/blockchaindb"
 )
@@ -26,6 +27,7 @@ var (
 
 func main() {
 	kingpin.Parse()
+	defer profile.Start(profile.CPUProfile, profile.NoShutdownHook, profile.ProfilePath("./tmp")).Stop()
 
 	fmt.Println("Time start: ", time.Now())
 	lastopt := ""
