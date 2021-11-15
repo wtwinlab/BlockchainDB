@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/signal"
 
+	"github.com/pkg/profile"
 	service "github.com/sbip-sg/BlockchainDB/bcdbnode"
 	"github.com/sbip-sg/BlockchainDB/bcdbnode/config"
 	pbv "github.com/sbip-sg/BlockchainDB/proto/blockchaindb"
@@ -16,6 +17,7 @@ import (
 
 func main() {
 
+	defer profile.Start(profile.CPUProfile, profile.NoShutdownHook, profile.ProfilePath("/tmp")).Stop()
 	configFile := flag.String("config", "config.toml", "The path to the config file")
 	flag.Parse()
 	var conf config.Options
