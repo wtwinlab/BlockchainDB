@@ -33,12 +33,12 @@ ethnet:
 install:
 	@/bin/bash scripts/stop_nodes.sh
 	@/bin/bash scripts/gen_config.sh ${shards} $(nodes)
-	@/bin/bash scripts/start_nodes.sh ${shards} $(nodes) > server.${shards}.$(nodes).log 2>&1 && cat server.${shards}.$(nodes).log
+	@/bin/bash scripts/start_nodes.sh ${shards} $(nodes) > server.${shards}.$(nodes).log 2>&1 
 
 verify:
 	@go run cmd/tests/main.go
 
 test:
 	@echo "Test start with node size: $(nodes), client size: $(clients)"
-	@/bin/bash scripts/ycsb/start_ycsb_test.sh $(nodes) $(clients) ${workload} ${distribution} >> test.$(nodes).${clients}.log 2>&1 && cat test.$(nodes).${clients}.log
+	@/bin/bash scripts/ycsb/start_ycsb_test.sh $(nodes) $(clients) ${workload} ${distribution} >> test.$(nodes).${clients}.log 2>&1 
 

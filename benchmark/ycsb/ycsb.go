@@ -206,6 +206,7 @@ func main() {
 					break
 				} else {
 					fmt.Println("verify is ongoing ... ", lastkey)
+					break
 				}
 			}
 
@@ -215,7 +216,7 @@ func main() {
 	wg3.Wait()
 
 	fmt.Println("#########################################################################")
-	fmt.Printf("Experiment %v servers %v drivers with %v concurrency to handle %v requests(loadpath %v workload %v ) --> Throughput: %v req/s, ",
+	fmt.Printf("Experiment: %v servers %v drivers with %v concurrency to handle %v requests(loadpath %v workload %v ) --> Throughput: %v req/s, ",
 		len(addrs), *driverNum, *driverConcurrency, reqNum.Load(), *dataRun, *dataLoad,
 		int64(float64(reqNum.Load())/time.Since(start).Seconds()),
 	)
