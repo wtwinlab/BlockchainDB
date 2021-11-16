@@ -11,10 +11,10 @@ echo "========================================================"
 printf -v date '%(%Y-%m-%d %H:%M:%S)T\n' -1 
 echo " Experiment 3 start"
 #make fast nodes=${bestnodes}
+make test nodes=${bestnodes} clients=${bestclients} distribution=ycsb_data_512B
 make test nodes=${bestnodes} clients=${bestclients} distribution=ycsb_data_2kB
 make test nodes=${bestnodes} clients=${bestclients} distribution=ycsb_data_8kB
 make test nodes=${bestnodes} clients=${bestclients} distribution=ycsb_data_32kB
 make test nodes=${bestnodes} clients=${bestclients} distribution=ycsb_data_128kB
-make test nodes=${bestnodes} clients=${bestclients} distribution=ycsb_data_512kB
 printf -v date '%(%Y-%m-%d %H:%M:%S)T\n' -1 
 echo "========================================================"
