@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TSTAMP=`date +%F-%H-%M-%S`
-LOGSD="logs-clients-blockchaindb-$TSTAMP"
+LOGSD="logs-nodes-blockchaindb-$TSTAMP"
 mkdir $LOGSD
 
 set -x
@@ -17,13 +17,17 @@ dir=$(pwd)
 echo $dir
 bin="$dir/../BlockchainDB/.bin/benchmark_bcdb"
 defaultAddrs="192.168.20.2:50001"
-loadPath="$dir/../temp/${distribution}/workload${workload}.dat"
-runPath="$dir/../temp/${distribution}/run_workload${workload}.dat"
+loadPath="$dir/temp/${distribution}/workload${workload}.dat"
+runPath="$dir/temp/${distribution}/run_workload${workload}.dat"
 
 if [ ! -f ${bin} ]; then
     echo "Binary file ${bin} not found!"
     echo "Hint: "
-    echo " Please build binaries by run command: make build "
+    echo " Please build binaries by run command: "
+    echo " cd ../BlockchainDB"
+    echo " make build "
+    echo " make docker (if never build blockchaindb image before)"
+    echo " cd -"
     echo "exit 1 "
     exit 1
 fi
@@ -47,6 +51,6 @@ for TH in $nNODES; do
     ./restart_cluster_blockchaindb.sh ${TH}
     ./start_blockchaindb.sh ${TH}      
     sleep 10
-    $bin --load-path=$loadPath --run-path=$runPath --ndrivers=$ndrivers --nthreads=$nthreads --server-addrs=${defaultAddrs} 2>&1 | tee $LOGSD/blockchaindb-nodes-$TH.txt
+    $bin --load-path=$loadPath --run-path=$runPath --ndrivers=$ndrivers --nthreads=$nthreads --server-addrs=${defaultAddrs} > $LOGSD/blockchaindb-nodes-$TH.txt 2>&1 
 done
-./restart_cluster_blockchaindb.sh
+
