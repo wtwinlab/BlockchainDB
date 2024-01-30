@@ -14,7 +14,7 @@ shardIDs=${1:-1}
 replicaIDs=${2:-4}
 
 
-bin="$dir/../cmd/bcdbnode/bcdbnode"
+bin="$dir/../.bin/bcdbnode"
 tomlDir="$dir/../config.nodes.${shardIDs}.${replicaIDs}"
 mkdir -p nodelog
 if [ ! -f ${bin} ]; then

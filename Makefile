@@ -9,15 +9,15 @@ distribution := ycsb_data
 
 all: download build ethnet install verify
 
-fast: build ethnet install verify
+fast: build redisup ethnet install verify
 
 clean:
 	@rm -fv $(binaries)
 
-build: clean $(binaries)
-	
-$(binaries):
-	@go build -o ./$@ $(GCFLAGS) ./$(dir $@)
+build: clean
+	@go build -o ./.bin/bcdbnode $(GCFLAGS) ./cmd/bcdbnode
+	@go build -o ./.bin/benchmark_bcdb $(GCFLAGS) ./benchmark/ycsb
+	@go build -o ./.bin/deploy_contract $(GCFLAGS) ./storage/ethereum/contracts/deploy
 
 download:
 	@/bin/bash scripts/ycsb/gen_ycsb_data.sh
@@ -33,8 +33,7 @@ ethnet:
 install:
 	@/bin/bash scripts/stop_nodes.sh
 	@/bin/bash scripts/gen_config.sh ${shards} $(nodes)
-	@/bin/bash scripts/start_nodes.sh ${shards} $(nodes) > server.${shards}.$(nodes).log 2>&1 
-
+	@/bin/bash scripts/start_nodes.sh ${shards} $(nodes)
 verify:
 	@go run cmd/tests/main.go
 

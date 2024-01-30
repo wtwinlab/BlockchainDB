@@ -10,7 +10,7 @@ cd -
 
 dir=$(dirname "$0")
 echo $dir
-bin="${dir}/../../storage/ethereum/contracts/deploy/deyploycontract"
+bin="${dir}/../../.bin/deploy_contract"
 configDir="${dir}/../../config.eth.${shardIDs}.${nodeIDs}"
 ls ${configDir}
 
